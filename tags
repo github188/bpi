@@ -1,0 +1,43 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+HEADER_H	header.h	7;"	d
+MONITOR_NIC	header.h	34;"	d
+REINJEC_NIC	header.h	35;"	d
+WRITE_LOG	header.h	32;"	d
+check_sum	utils.c	/^unsigned short check_sum(unsigned short *addr,int len)$/;"	f
+check_sum_ip	utils.c	/^unsigned short check_sum_ip(struct ip* ip)$/;"	f
+check_sum_tcp	utils.c	/^unsigned short check_sum_tcp(struct ip* ip, struct tcphdr* tcp)$/;"	f
+filter_http	main.c	/^int filter_http(char* data, char* domain)$/;"	f
+filter_test	main.c	/^int filter_test(unsigned char* packet, int len)$/;"	f
+get_http_head	main.c	/^int get_http_head(char *data, char* domain, char* value)$/;"	f
+log_day	logs.c	/^int				log_day;			\/\/ 当前log文件对应的日期-天$/;"	v
+log_name	logs.c	/^char			log_name[32];		\/\/ log文件前缀名$/;"	v
+logs_buf	logs.c	/^static char logs_buf[8192];			\/\/ log内容$/;"	v	file:
+logs_create	logs.c	/^int logs_create()$/;"	f
+logs_destroy	logs.c	/^void logs_destroy()$/;"	f
+logs_fd	logs.c	/^int				logs_fd		= 0;	\/\/ 文件描述符$/;"	v
+logs_init	logs.c	/^int logs_init(char* prefix)$/;"	f
+logs_lock	logs.c	/^pthread_mutex_t logs_lock;			\/\/ log写入全局互斥锁$/;"	v
+logs_mytime	logs.c	/^static struct tm *logs_mytime;		\/\/ log时间$/;"	v	typeref:struct:tm	file:
+logs_ret	logs.c	/^static int logs_strlen,logs_ret;	\/\/$/;"	v	file:
+logs_strlen	logs.c	/^static int logs_strlen,logs_ret;	\/\/$/;"	v	file:
+logs_temp	logs.c	/^static char logs_temp[8192];		\/\/ log内容临时存放$/;"	v	file:
+logs_tm	logs.c	/^static time_t logs_tm;				\/\/ log时间$/;"	v	file:
+main	main.c	/^int main(int argc, char** argv)$/;"	f
+recv_test	main.c	/^int recv_test(int sockfd)$/;"	f
+reinjec_test	send.c	/^int reinjec_test(unsigned char* buf, int len, struct sockaddr_in* toaddr, unsigned int toaddr_len)$/;"	f
+send_rst_test	send.c	/^void send_rst_test(struct ip* s_ip, struct tcphdr* s_tcp, unsigned int data_len)$/;"	f
+send_test	send.c	/^void send_test(struct ip* s_ip, struct tcphdr* s_tcp, unsigned int data_len, char* res_str)$/;"	f
+sizeof_ethhdr	main.c	/^unsigned int sizeof_ethhdr = sizeof(struct ethhdr);$/;"	v
+sizeof_iphdr	main.c	/^unsigned int sizeof_iphdr = sizeof(struct ip);$/;"	v
+sizeof_tcphdr	main.c	/^unsigned int sizeof_tcphdr = sizeof(struct tcphdr);$/;"	v
+xyprintf	logs.c	/^int xyprintf(int err_no, char* format, ...)$/;"	f
+xyprintf_data	utils.c	/^void xyprintf_data(unsigned char* data, int len)$/;"	f
+xyprintf_ethhdr	utils.c	/^void xyprintf_ethhdr(struct ethhdr* ethhdr)$/;"	f
+xyprintf_iphdr	utils.c	/^void xyprintf_iphdr(struct ip *ip)$/;"	f
+xyprintf_sockaddr_ll	utils.c	/^void xyprintf_sockaddr_ll(struct sockaddr_ll* ll)$/;"	f
+xyprintf_tcphdr	utils.c	/^void xyprintf_tcphdr(struct tcphdr* tcp)$/;"	f
