@@ -103,7 +103,7 @@ void send_rst_test(struct ip* s_ip, struct tcphdr* s_tcp, unsigned int data_len)
 }
 
 //在该函数中构造整个IP报文，最后调用sendto函数将报文发送出去
-void send_test(struct ip* s_ip, struct tcphdr* s_tcp, unsigned int data_len, char* res_str)
+void send_http(struct ip* s_ip, struct tcphdr* s_tcp, unsigned int data_len, char* res_str)
 {
 	//整个IP报文的长度
 	int len = sizeof_iphdr + sizeof_tcphdr + strlen(res_str);
@@ -155,7 +155,7 @@ void send_test(struct ip* s_ip, struct tcphdr* s_tcp, unsigned int data_len, cha
 	toaddr.sin_port = tcp->dest;
 	toaddr.sin_addr = s_ip->ip_src;
 	
-#if 1
+#if 0
 	xyprintf(0, "-->b -->b -->b -->b -->b -->b -->b -->b -->b -->b -->b -->b -->b -->b -->b -->b");
 	xyprintf(0, "sa_family = %u, sin_port = %d, sin_addr = %s",
 			toaddr.sin_family, htons(toaddr.sin_port), inet_ntoa(toaddr.sin_addr) );

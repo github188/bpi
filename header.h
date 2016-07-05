@@ -55,8 +55,22 @@ void xyprintf_ethhdr(struct ethhdr* ethhdr);
 void xyprintf_data(unsigned char* data, int len);
 
 // send.c
-void send_test(struct ip* s_ip, struct tcphdr* s_tcp, unsigned int data_len, char* res_str);
+void send_http(struct ip* s_ip, struct tcphdr* s_tcp, unsigned int data_len, char* res_str);
 void send_rst_test(struct ip* s_ip, struct tcphdr* s_tcp, unsigned int data_len);
+
+
+
+// filter.c
+struct link_packet{
+	unsigned char* packet;
+	unsigned int packet_len;
+};
+void* filter_thread(void* lp);
+
+// monitor.c
+void monitor_thread();
+
+
 #endif
 
 #if 0
