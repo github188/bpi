@@ -315,3 +315,111 @@ void xyprintf_data(unsigned char* data, int len)
 		xyprintf(0, "%s\t%s", x_buf, s_buf);
 	}
 }
+
+// 从/proc/net/dev中读取网卡列表
+// 这也可以使用SIOCGIFCONF获取，但获取到的只能是有ip的网卡
+// 如果不需要获取mac地址，可以使用getifaddrs函数获取
+
+int init_nic(char *reinjec_nic)
+{
+	// 打开网卡列表文件
+	FILE* file = fopen("/proc/net/dev", "r");
+	if(!file){
+		xyprintf(errno, "This a error at file %s line %d", __FILE__, __LINE__);
+		goto FILEED_ERROR;
+	}
+
+	// 创建一个socket套接字
+	int sockfd = socket(AF_INET, SOCK_DGRAM, 0);
+	if ( sockfd < 0){
+		xyprintf(errno, "This a error at file %s line %d", __FILE__, __LINE__);
+		goto SOCKETED_ERROR;
+	}
+
+	// 读取文件缓冲区
+	char buf[1024] = {0};
+	char* temp;
+	
+	struct ifreq ifr;
+
+	// 逐行读取
+	while( fgets(buf, 1023, file) ){
+		// 根据冒号判断此行是否有网卡名称
+		temp = strchr(buf, ':');
+		if(temp){
+			// 将冒号改成结束符
+			*temp = 0;
+			temp = buf;
+
+			// 过滤掉前面的空格
+			while( *temp == ' ' ){
+				temp++;
+			}
+
+			// 名字
+			memset(&ifr, 0, sizeof(ifr));
+			strcpy(ifr.ifr_name, temp);
+
+			// 如果是回注口
+			if( !strcmp(temp, reinjec_nic) ){
+				// 获取mac地址 存放到全局变量reinjec_mac中
+				if ( ioctl(sockfd, SIOCGIFHWADDR, &ifr) == -1){
+					xyprintf(errno, "This a error at file %s line %d", __FILE__, __LINE__);
+					goto SOCKETED_ERROR;
+				}
+				memcpy(reinjec_mac, ifr.ifr_hwaddr.sa_data, 6);
+				
+				// 获取mtu
+				if( ioctl(sockfd, SIOCGIFMTU, &ifr) == -1 ){
+					xyprintf(errno, "This a error at file %s line %d", __FILE__, __LINE__);
+					goto SOCKETED_ERROR;
+				}
+				reinjec_mtu = ifr.ifr_mtu;
+				
+				xyprintf(0, "Get reinjec nic %s's mtu is %d, mac is %02x:%02x:%02x:%02x:%02x:%02x",
+						reinjec_nic, reinjec_mtu,
+						reinjec_mac[0],	reinjec_mac[1],	reinjec_mac[2],
+						reinjec_mac[3],	reinjec_mac[4],	reinjec_mac[5]);
+			}
+			// 如果不是回注口
+			else {
+				// 获取接口标识
+				if ( ioctl(sockfd, SIOCGIFFLAGS, &ifr) == -1 ){
+					xyprintf(errno, "This a error at file %s line %d", __FILE__, __LINE__);
+					goto SOCKETED_ERROR;
+				}
+			
+				// 判断是不是本地环路接口
+				if( ifr.ifr_flags & IFF_LOOPBACK ){
+					xyprintf(0, "Nic %s is the loopback interface", ifr.ifr_name);
+				}
+				else {
+					// 启用
+					ifr.ifr_flags |= IFF_UP;
+					// 混乱模式
+					ifr.ifr_flags |= IFF_PROMISC;
+					
+					// 设置接口标识
+					if( ioctl(sockfd, SIOCSIFFLAGS, &ifr) == -1 ) { 
+						xyprintf(errno, "This a error at file %s line %d", __FILE__, __LINE__);
+						goto SOCKETED_ERROR;
+					}
+					xyprintf(0, "Nic %s set up & promisc success!", ifr.ifr_name);
+				}
+			} //end if
+		} // end if
+		memset(buf, 0, sizeof(buf));
+	} // end while
+
+	xyprintf(0, "Init Nic success!\n");
+
+	close(sockfd);
+	fclose(file);
+	return 0;
+
+SOCKETED_ERROR:
+	close(sockfd);
+FILEED_ERROR:
+	fclose(file);
+	return -1;
+}

@@ -4,6 +4,9 @@ unsigned int sizeof_iphdr = sizeof(struct ip);
 unsigned int sizeof_tcphdr = sizeof(struct tcphdr);
 unsigned int sizeof_ethhdr = sizeof(struct ethhdr);
 
+unsigned char reinjec_mac[6] = {0};
+short reinjec_mtu = 0;
+
 int get_http_head(char *data, char* domain, char* value)
 {
 	char *temp = strstr(data, "\r\n");
@@ -92,20 +95,10 @@ void* filter_thread(void* lp)
 	}
 
 	// 过滤掉回注口的数据
-	// TODO	需要智能添加
-	char local_mac[] = {0x1e, 0xc5, 0x66, 0xc0, 0x04, 0x1a};
-	if( !memcmp(local_mac, ethhdr->h_dest, 6) || !memcmp(local_mac, ethhdr->h_source, 6) ){
+	if( !memcmp(reinjec_mac, ethhdr->h_dest, 6) || !memcmp(reinjec_mac, ethhdr->h_source, 6) ){
 		//xyprintf(0, "Local data!");
 		goto DATA_ERR;
 	}
-/*
-	// 只要这台机器的数据
-	char local_mac[] = {0xd8, 0x50, 0xe6, 0x56, 0x3c, 0xa5};
-	if( memcmp(local_mac, ethhdr->h_dest, 6) && memcmp(local_mac, ethhdr->h_source, 6) ){
-		//xyprintf(0, "Local data!");
-		goto DATA_ERR;
-	}
-*/
 
 // iphdr
 

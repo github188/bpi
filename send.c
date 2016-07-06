@@ -9,8 +9,7 @@ int reinjec_test(unsigned char* buf, int len, struct sockaddr_in* toaddr, unsign
 		return -1;
 	}
 
-	// 设置网卡
-	// TODO 网卡需要能智能获取
+	// 设置发送数据的网卡
 	struct ifreq if_mon_nic;
 	strncpy(if_mon_nic.ifr_name, REINJEC_NIC, strlen(REINJEC_NIC) + 1);
 	

@@ -4,8 +4,8 @@ MAKE=make
 #编译选项
 LIB=-lpthread
 
-SOURCE=filter.c logs.c main.c monitor.c send.c utils.c
-DEPEND=filter.o logs.o main.o monitor.o send.o utils.o
+SOURCE=ruse.c filter.c logs.c main.c monitor.c send.c utils.c
+DEPEND=ruse.o filter.o logs.o main.o monitor.o send.o utils.o
 TARGET=bpi.out
 
 all:clean out mv

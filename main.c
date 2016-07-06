@@ -28,6 +28,20 @@ void run()
 			*************************************************************************\n",
 			getpid() );
 
+	if( init_nic(REINJEC_NIC) ){
+		xyprintf(0, "Init Nic failed, 10s exit!");
+		sleep(10);
+		exit(0);
+	}
+	
+	if( init_ruse() ){
+		xyprintf(0, "Init Ruse failed, 10s exit!");
+		sleep(10);
+		exit(0);
+	}
+
+
+
 //	pthread_mutex_init(&gv_authenticate_list_lock, 0);
 
 	/****************平台连接监视线程**************************************************/

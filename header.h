@@ -19,6 +19,7 @@
 #include <pthread.h>
 
 #include <netdb.h>
+#include <ifaddrs.h>
 #include <sys/socket.h>
 #include <netinet/in.h>
 #include <netinet/ip.h>
@@ -29,15 +30,19 @@
 #include <netpacket/packet.h>	// struct sockaddr_ll
 #include <linux/sockios.h>		// SIOCGIFFLAGS 
 
+#include "list.h"
+
 #define WRITE_LOG	0
 
-#define MONITOR_NIC		"p33p1"
+// TODO 网卡需要在配置文件中读取
 #define REINJEC_NIC		"p32p1" 
 
 // 全局变量
 extern unsigned int sizeof_iphdr;
 extern unsigned int sizeof_tcphdr;
 extern unsigned int sizeof_ethhdr;
+extern unsigned char reinjec_mac[6];
+extern short reinjec_mtu;
 
 // log函数
 int logs_init(char* prefix);
@@ -70,6 +75,7 @@ void* filter_thread(void* lp);
 // monitor.c
 void monitor_thread();
 
+// 
 
 #endif
 

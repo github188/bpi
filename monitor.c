@@ -14,23 +14,6 @@ void monitor_thread()
 		pthread_exit(NULL);
 	}
 
-	// TODO 网口名称需要能智能获取
-	struct ifreq if_mon_nic;
-	strncpy(if_mon_nic.ifr_name, MONITOR_NIC, strlen(MONITOR_NIC) + 1);
-	
-	//取接口数据
-	if( ioctl(sockfd, SIOCGIFFLAGS, &if_mon_nic) == -1 ) {
-		xyprintf(errno, "There is an error in %s(%d) : ", __FILE__, __LINE__);
-		goto ERR;
-	}
-	
-	// 设置混乱模式
-	if_mon_nic.ifr_flags |= IFF_PROMISC;
-	if( ioctl(sockfd, SIOCSIFFLAGS, &if_mon_nic) == -1 ) { 
-		xyprintf(errno, "There is an error in %s(%d) : ", __FILE__, __LINE__);
-		goto ERR;
-	}
-	
 	// TODO 这里不起作用
 	// 绑定网卡对链路层不起作用
 //	if( setsockopt(sockfd, SOL_SOCKET, SO_BINDTODEVICE, (char*)&if_mon_nic, sizeof(if_mon_nic))){
@@ -41,7 +24,6 @@ void monitor_thread()
 	struct sockaddr_in from = {0};
 	socklen_t from_len = sizeof(from);
 	unsigned char buf[65535];
-	int ret = 0;
 	pthread_t pt;
 
 
@@ -89,7 +71,7 @@ void monitor_thread()
 
 		// 收包计数器
 		if(++count % 10000 == 0){
-			xyprintf(0, "<-- <-- <-- Recv the %u packet, len is %d!", count, ret);
+			xyprintf(0, "<-- <-- <-- Recv the %u packet!", count);
 		}
 		//xyprintf_sockaddr_ll(&from);
 
