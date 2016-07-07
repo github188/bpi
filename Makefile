@@ -25,7 +25,7 @@ gdb_out:
 	@$(CC) -g -O0 $(DEPEND) -o $(TARGET) $(LIB)
 
 mv:
-	@mv $(TARGET) ~
+	@mv $(TARGET) ~/out/$(TARGET)
 	-@rm -f *.o
 
 clean:
