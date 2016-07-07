@@ -12,6 +12,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <sys/types.h>
+#include <sys/wait.h>
 #include <fcntl.h>
 #include <time.h>
 #include <stdarg.h>
@@ -21,6 +22,7 @@
 #include <netdb.h>
 #include <ifaddrs.h>
 #include <sys/socket.h>
+#include <sys/ioctl.h>
 #include <netinet/in.h>
 #include <netinet/ip.h>
 #include <arpa/inet.h>
@@ -31,8 +33,9 @@
 #include <linux/sockios.h>		// SIOCGIFFLAGS 
 
 #include "list.h"
+#include "cJSON.h"
 
-#define WRITE_LOG	0
+#define WRITE_LOG	1
 
 // TODO 网卡需要在配置文件中读取
 #define REINJEC_NIC		"p32p1" 
@@ -59,11 +62,12 @@ void xyprintf_iphdr(struct ip *ip);
 void xyprintf_ethhdr(struct ethhdr* ethhdr);
 void xyprintf_data(unsigned char* data, int len);
 
+
+int init_nic(char *reinjec_nic);
+
 // send.c
 void send_http(struct ip* s_ip, struct tcphdr* s_tcp, unsigned int data_len, char* res_str);
 void send_rst_test(struct ip* s_ip, struct tcphdr* s_tcp, unsigned int data_len);
-
-
 
 // filter.c
 struct link_packet{
@@ -75,7 +79,10 @@ void* filter_thread(void* lp);
 // monitor.c
 void monitor_thread();
 
-// 
+// ruse
+char* ruse_list_find(char* url);
+int init_ruse();
+
 
 #endif
 

@@ -1,6 +1,6 @@
 #include "header.h"
 
-#define IS_DAEMON_EXIST			0					// 精灵线程
+#define IS_DAEMON_EXIST			1					// 精灵线程
 
 /** 
  *@brief  程序主体函数 由子进程运行
@@ -40,6 +40,12 @@ void run()
 		exit(0);
 	}
 
+	//打印程序开启信息
+	xyprintf(0, "\n\t\t\t*************************************************************************\n\
+			****                                                                 ****\n\
+			****           Initialization is complete, start monitoring!         ****\n\
+			****                                                                 ****\n\
+			*************************************************************************\n");
 
 
 //	pthread_mutex_init(&gv_authenticate_list_lock, 0);

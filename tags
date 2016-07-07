@@ -6,36 +6,95 @@
 !_TAG_PROGRAM_VERSION	5.9~svn20110310	//
 ADDR	test/header.h	20;"	d
 CC	Makefile	/^CC=gcc$/;"	m
-DEPEND	Makefile	/^DEPEND=ruse.o filter.o logs.o main.o monitor.o send.o utils.o$/;"	m
-GET_RUSE_LIST_URL	ruse.c	57;"	d	file:
-GET_RUSE_NUM_URL	ruse.c	56;"	d	file:
+DEPEND	Makefile	/^DEPEND=cJSON.o ruse.o filter.o logs.o main.o monitor.o send.o utils.o$/;"	m
+GET_RUSE_LIST_URL	ruse.c	81;"	d	file:
+GET_RUSE_NUM_URL	ruse.c	80;"	d	file:
 HEADER_H	header.h	7;"	d
 HEADER_H	test/header.h	7;"	d
 INIT_LIST_HEAD	list.h	/^static inline void INIT_LIST_HEAD(struct list_head *list)$/;"	f
 IS_DAEMON_EXIST	main.c	3;"	d	file:
-LIB	Makefile	/^LIB=-lpthread$/;"	m
+LIB	Makefile	/^LIB=-lpthread -lm$/;"	m
 LIST_HEAD	list.h	22;"	d
 LIST_HEAD_INIT	list.h	20;"	d
 MAKE	Makefile	/^MAKE=make$/;"	m
 MAX_LINK_PACKET_SIZE	monitor.c	3;"	d	file:
-ONCE_GET_RUSE_NUM	ruse.c	58;"	d	file:
+ONCE_GET_RUSE_NUM	ruse.c	82;"	d	file:
 PORT	test/header.h	19;"	d
-REINJEC_NIC	header.h	38;"	d
-RUSE_SERVER_HOST	ruse.c	54;"	d	file:
-RUSE_SERVER_PORT	ruse.c	55;"	d	file:
-SOURCE	Makefile	/^SOURCE=ruse.c filter.c logs.c main.c monitor.c send.c utils.c$/;"	m
+REINJEC_NIC	header.h	41;"	d
+RUSE_SERVER_HOST	ruse.c	78;"	d	file:
+RUSE_SERVER_PORT	ruse.c	79;"	d	file:
+SOURCE	Makefile	/^SOURCE=cJSON.c ruse.c filter.c logs.c main.c monitor.c send.c utils.c$/;"	m
 TARGET	Makefile	/^TARGET=bpi.out$/;"	m
-WRITE_LOG	header.h	35;"	d
+WRITE_LOG	header.h	38;"	d
 _LINUX_LIST_H	list.h	2;"	d
 __list_add	list.h	/^static inline void __list_add(struct list_head *new,$/;"	f
 __list_del	list.h	/^static inline void __list_del(struct list_head * prev, struct list_head * next)$/;"	f
+cJSON	cJSON.h	/^typedef struct cJSON {$/;"	s
+cJSON	cJSON.h	/^} cJSON;$/;"	t	typeref:struct:cJSON
+cJSON_AddFalseToObject	cJSON.h	121;"	d
+cJSON_AddItemReferenceToArray	cJSON.c	/^void	cJSON_AddItemReferenceToArray(cJSON *array, cJSON *item)						{cJSON_AddItemToArray(array,create_reference(item));}$/;"	f
+cJSON_AddItemReferenceToObject	cJSON.c	/^void	cJSON_AddItemReferenceToObject(cJSON *object,const char *string,cJSON *item)	{cJSON_AddItemToObject(object,string,create_reference(item));}$/;"	f
+cJSON_AddItemToArray	cJSON.c	/^void   cJSON_AddItemToArray(cJSON *array, cJSON *item)						{cJSON *c=array->child;if (!item) return; if (!c) {array->child=item;} else {while (c && c->next) c=c->next; suffix_object(c,item);}}$/;"	f
+cJSON_AddItemToObject	cJSON.c	/^void   cJSON_AddItemToObject(cJSON *object,const char *string,cJSON *item)	{if (!item) return; if (item->string) cJSON_free(item->string);item->string=cJSON_strdup(string);cJSON_AddItemToArray(object,item);}$/;"	f
+cJSON_AddNullToObject	cJSON.h	119;"	d
+cJSON_AddNumberToObject	cJSON.h	122;"	d
+cJSON_AddStringToObject	cJSON.h	123;"	d
+cJSON_AddTrueToObject	cJSON.h	120;"	d
+cJSON_Array	cJSON.h	39;"	d
+cJSON_CreateArray	cJSON.c	/^cJSON *cJSON_CreateArray()						{cJSON *item=cJSON_New_Item();if(item)item->type=cJSON_Array;return item;}$/;"	f
+cJSON_CreateBool	cJSON.c	/^cJSON *cJSON_CreateBool(int b)					{cJSON *item=cJSON_New_Item();if(item)item->type=b?cJSON_True:cJSON_False;return item;}$/;"	f
+cJSON_CreateDoubleArray	cJSON.c	/^cJSON *cJSON_CreateDoubleArray(double *numbers,int count)		{int i;cJSON *n=0,*p=0,*a=cJSON_CreateArray();for(i=0;a && i<count;i++){n=cJSON_CreateNumber(numbers[i]);if(!i)a->child=n;else suffix_object(p,n);p=n;}return a;}$/;"	f
+cJSON_CreateFalse	cJSON.c	/^cJSON *cJSON_CreateFalse()						{cJSON *item=cJSON_New_Item();if(item)item->type=cJSON_False;return item;}$/;"	f
+cJSON_CreateFloatArray	cJSON.c	/^cJSON *cJSON_CreateFloatArray(float *numbers,int count)			{int i;cJSON *n=0,*p=0,*a=cJSON_CreateArray();for(i=0;a && i<count;i++){n=cJSON_CreateNumber(numbers[i]);if(!i)a->child=n;else suffix_object(p,n);p=n;}return a;}$/;"	f
+cJSON_CreateIntArray	cJSON.c	/^cJSON *cJSON_CreateIntArray(int *numbers,int count)				{int i;cJSON *n=0,*p=0,*a=cJSON_CreateArray();for(i=0;a && i<count;i++){n=cJSON_CreateNumber(numbers[i]);if(!i)a->child=n;else suffix_object(p,n);p=n;}return a;}$/;"	f
+cJSON_CreateNull	cJSON.c	/^cJSON *cJSON_CreateNull()						{cJSON *item=cJSON_New_Item();if(item)item->type=cJSON_NULL;return item;}$/;"	f
+cJSON_CreateNumber	cJSON.c	/^cJSON *cJSON_CreateNumber(double num)			{cJSON *item=cJSON_New_Item();if(item){item->type=cJSON_Number;item->valuedouble=num;item->valueint=(int)num;}return item;}$/;"	f
+cJSON_CreateObject	cJSON.c	/^cJSON *cJSON_CreateObject()						{cJSON *item=cJSON_New_Item();if(item)item->type=cJSON_Object;return item;}$/;"	f
+cJSON_CreateString	cJSON.c	/^cJSON *cJSON_CreateString(const char *string)	{cJSON *item=cJSON_New_Item();if(item){item->type=cJSON_String;item->valuestring=cJSON_strdup(string);}return item;}$/;"	f
+cJSON_CreateStringArray	cJSON.c	/^cJSON *cJSON_CreateStringArray(const char **strings,int count)	{int i;cJSON *n=0,*p=0,*a=cJSON_CreateArray();for(i=0;a && i<count;i++){n=cJSON_CreateString(strings[i]);if(!i)a->child=n;else suffix_object(p,n);p=n;}return a;}$/;"	f
+cJSON_CreateTrue	cJSON.c	/^cJSON *cJSON_CreateTrue()						{cJSON *item=cJSON_New_Item();if(item)item->type=cJSON_True;return item;}$/;"	f
+cJSON_Delete	cJSON.c	/^void cJSON_Delete(cJSON *c)$/;"	f
+cJSON_DeleteItemFromArray	cJSON.c	/^void   cJSON_DeleteItemFromArray(cJSON *array,int which)			{cJSON_Delete(cJSON_DetachItemFromArray(array,which));}$/;"	f
+cJSON_DeleteItemFromObject	cJSON.c	/^void   cJSON_DeleteItemFromObject(cJSON *object,const char *string) {cJSON_Delete(cJSON_DetachItemFromObject(object,string));}$/;"	f
+cJSON_DetachItemFromArray	cJSON.c	/^cJSON *cJSON_DetachItemFromArray(cJSON *array,int which)			{cJSON *c=array->child;while (c && which>0) c=c->next,which--;if (!c) return 0;$/;"	f
+cJSON_DetachItemFromObject	cJSON.c	/^cJSON *cJSON_DetachItemFromObject(cJSON *object,const char *string) {int i=0;cJSON *c=object->child;while (c && cJSON_strcasecmp(c->string,string)) i++,c=c->next;if (c) return cJSON_DetachItemFromArray(object,i);return 0;}$/;"	f
+cJSON_False	cJSON.h	34;"	d
+cJSON_GetArrayItem	cJSON.c	/^cJSON *cJSON_GetArrayItem(cJSON *array,int item)				{cJSON *c=array->child;  while (c && item>0) item--,c=c->next; return c;}$/;"	f
+cJSON_GetArraySize	cJSON.c	/^int    cJSON_GetArraySize(cJSON *array)							{cJSON *c=array->child;int i=0;while(c)i++,c=c->next;return i;}$/;"	f
+cJSON_GetErrorPtr	cJSON.c	/^const char *cJSON_GetErrorPtr() {return ep;}$/;"	f
+cJSON_GetObjectItem	cJSON.c	/^cJSON *cJSON_GetObjectItem(cJSON *object,const char *string)	{cJSON *c=object->child; while (c && cJSON_strcasecmp(c->string,string)) c=c->next; return c;}$/;"	f
+cJSON_Hooks	cJSON.h	/^typedef struct cJSON_Hooks {$/;"	s
+cJSON_Hooks	cJSON.h	/^} cJSON_Hooks;$/;"	t	typeref:struct:cJSON_Hooks
+cJSON_InitHooks	cJSON.c	/^void cJSON_InitHooks(cJSON_Hooks* hooks)$/;"	f
+cJSON_IsReference	cJSON.h	42;"	d
+cJSON_NULL	cJSON.h	36;"	d
+cJSON_New_Item	cJSON.c	/^static cJSON *cJSON_New_Item()$/;"	f	file:
+cJSON_Number	cJSON.h	37;"	d
+cJSON_Object	cJSON.h	40;"	d
+cJSON_Parse	cJSON.c	/^cJSON *cJSON_Parse(const char *value)$/;"	f
+cJSON_Print	cJSON.c	/^char *cJSON_Print(cJSON *item)				{return print_value(item,0,1);}$/;"	f
+cJSON_PrintUnformatted	cJSON.c	/^char *cJSON_PrintUnformatted(cJSON *item)	{return print_value(item,0,0);}$/;"	f
+cJSON_ReplaceItemInArray	cJSON.c	/^void   cJSON_ReplaceItemInArray(cJSON *array,int which,cJSON *newitem)		{cJSON *c=array->child;while (c && which>0) c=c->next,which--;if (!c) return;$/;"	f
+cJSON_ReplaceItemInObject	cJSON.c	/^void   cJSON_ReplaceItemInObject(cJSON *object,const char *string,cJSON *newitem){int i=0;cJSON *c=object->child;while(c && cJSON_strcasecmp(c->string,string))i++,c=c->next;if(c){newitem->string=cJSON_strdup(string);cJSON_ReplaceItemInArray(object,i,newitem);}}$/;"	f
+cJSON_String	cJSON.h	38;"	d
+cJSON_True	cJSON.h	35;"	d
+cJSON__h	cJSON.h	24;"	d
+cJSON_free	cJSON.c	/^static void (*cJSON_free)(void *ptr) = free;$/;"	v	file:
+cJSON_malloc	cJSON.c	/^static void *(*cJSON_malloc)(size_t sz) = malloc;$/;"	v	file:
+cJSON_strcasecmp	cJSON.c	/^static int cJSON_strcasecmp(const char *s1,const char *s2)$/;"	f	file:
+cJSON_strdup	cJSON.c	/^static char* cJSON_strdup(const char* str)$/;"	f	file:
 check_sum	utils.c	/^unsigned short check_sum(unsigned short *addr,int len)$/;"	f
 check_sum_ip	utils.c	/^unsigned short check_sum_ip(struct ip* ip)$/;"	f
 check_sum_tcp	utils.c	/^unsigned short check_sum_tcp(struct ip* ip, struct tcphdr* tcp)$/;"	f
+child	cJSON.h	/^	struct cJSON *child;		\/* An array or object item will have a child pointer pointing to a chain of the items in the array\/object. *\/$/;"	m	struct:cJSON	typeref:struct:cJSON::cJSON
 conn_ruse_server	ruse.c	/^int conn_ruse_server()$/;"	f
 count	monitor.c	/^static unsigned int count = 0;$/;"	v	file:
+create_reference	cJSON.c	/^static cJSON *create_reference(cJSON *item) {cJSON *ref=cJSON_New_Item();if (!ref) return 0;memcpy(ref,item,sizeof(cJSON));ref->string=0;ref->type|=cJSON_IsReference;ref->next=ref->prev=0;return ref;}$/;"	f	file:
+ep	cJSON.c	/^static const char *ep;$/;"	v	file:
 filter_http	filter.c	/^int filter_http(char* data, char* domain)$/;"	f
 filter_thread	filter.c	/^void* filter_thread(void* lp)$/;"	f
+firstByteMark	cJSON.c	/^static const unsigned char firstByteMark[7] = { 0x00, 0x00, 0xC0, 0xE0, 0xF0, 0xF8, 0xFC };$/;"	v	file:
+free_fn	cJSON.h	/^      void (*free_fn)(void *ptr);$/;"	m	struct:cJSON_Hooks
 get_http_head	filter.c	/^int get_http_head(char *data, char* domain, char* value)$/;"	f
 get_http_res	ruse.c	/^char* get_http_res(int sockfd, char* ques)$/;"	f
 init_nic	utils.c	/^int init_nic(char *reinjec_nic)$/;"	f
@@ -65,13 +124,28 @@ logs_tm	logs.c	/^static time_t logs_tm;				\/\/ log时间$/;"	v	file:
 main	main.c	/^int main(int argc, char** argv)$/;"	f
 main	test/recvbag/main.c	/^int main(int argc, char** argv)$/;"	f
 main	test/sendbag/main.c	/^int main(int argc, char** argv)$/;"	f
+malloc_fn	cJSON.h	/^      void *(*malloc_fn)(size_t sz);$/;"	m	struct:cJSON_Hooks
 monitor_thread	monitor.c	/^void monitor_thread()$/;"	f
+next	cJSON.h	/^	struct cJSON *next,*prev;	\/* next\/prev allow you to walk array\/object chains. Alternatively, use GetArraySize\/GetArrayItem\/GetObjectItem *\/$/;"	m	struct:cJSON	typeref:struct:cJSON::cJSON
 next	list.h	/^	struct list_head *next, *prev;$/;"	m	struct:list_head	typeref:struct:list_head::list_head
 node	ruse.c	/^	struct list_head node;$/;"	m	struct:ruse_node	typeref:struct:ruse_node::list_head	file:
 packet	header.h	/^	unsigned char* packet;$/;"	m	struct:link_packet
 packet_len	header.h	/^	unsigned int packet_len;$/;"	m	struct:link_packet
+parse_array	cJSON.c	/^static const char *parse_array(cJSON *item,const char *value)$/;"	f	file:
+parse_number	cJSON.c	/^static const char *parse_number(cJSON *item,const char *num)$/;"	f	file:
+parse_object	cJSON.c	/^static const char *parse_object(cJSON *item,const char *value)$/;"	f	file:
+parse_string	cJSON.c	/^static const char *parse_string(cJSON *item,const char *str)$/;"	f	file:
+parse_value	cJSON.c	/^static const char *parse_value(cJSON *item,const char *value)$/;"	f	file:
+prev	cJSON.h	/^	struct cJSON *next,*prev;	\/* next\/prev allow you to walk array\/object chains. Alternatively, use GetArraySize\/GetArrayItem\/GetObjectItem *\/$/;"	m	struct:cJSON	typeref:struct:cJSON::
 prev	list.h	/^	struct list_head *next, *prev;$/;"	m	struct:list_head	typeref:struct:list_head::
+print_array	cJSON.c	/^static char *print_array(cJSON *item,int depth,int fmt)$/;"	f	file:
+print_number	cJSON.c	/^static char *print_number(cJSON *item)$/;"	f	file:
+print_object	cJSON.c	/^static char *print_object(cJSON *item,int depth,int fmt)$/;"	f	file:
+print_string	cJSON.c	/^static char *print_string(cJSON *item)	{return print_string_ptr(item->valuestring);}$/;"	f	file:
+print_string_ptr	cJSON.c	/^static char *print_string_ptr(const char *str)$/;"	f	file:
+print_value	cJSON.c	/^static char *print_value(cJSON *item,int depth,int fmt)$/;"	f	file:
 printf_time	test/utils.c	/^void printf_time()$/;"	f
+pro_http_res	ruse.c	/^int pro_http_res(char* res, int num)$/;"	f
 recv_block	ruse.c	/^int recv_block(int sock, unsigned char *buf, int len\/*, int block_flag*\/)$/;"	f
 reinjec_mac	filter.c	/^unsigned char reinjec_mac[6] = {0};$/;"	v
 reinjec_mtu	filter.c	/^short reinjec_mtu = 0;$/;"	v
@@ -89,7 +163,14 @@ send_rst_test	send.c	/^void send_rst_test(struct ip* s_ip, struct tcphdr* s_tcp,
 sizeof_ethhdr	filter.c	/^unsigned int sizeof_ethhdr = sizeof(struct ethhdr);$/;"	v
 sizeof_iphdr	filter.c	/^unsigned int sizeof_iphdr = sizeof(struct ip);$/;"	v
 sizeof_tcphdr	filter.c	/^unsigned int sizeof_tcphdr = sizeof(struct tcphdr);$/;"	v
+skip	cJSON.c	/^static const char *skip(const char *in) {while (in && *in && (unsigned char)*in<=32) in++; return in;}$/;"	f	file:
+string	cJSON.h	/^	char *string;				\/* The item's name string, if this item is the child of, or is in the list of subitems of an object. *\/$/;"	m	struct:cJSON
+suffix_object	cJSON.c	/^static void suffix_object(cJSON *prev,cJSON *item) {prev->next=item;item->prev=prev;}$/;"	f	file:
+type	cJSON.h	/^	int type;					\/* The type of the item, as above. *\/$/;"	m	struct:cJSON
 url	ruse.c	/^	char* url;$/;"	m	struct:ruse_node	file:
+valuedouble	cJSON.h	/^	double valuedouble;			\/* The item's number, if type==cJSON_Number *\/$/;"	m	struct:cJSON
+valueint	cJSON.h	/^	int valueint;				\/* The item's number, if type==cJSON_Number *\/$/;"	m	struct:cJSON
+valuestring	cJSON.h	/^	char *valuestring;			\/* The item's string, if type==cJSON_String *\/$/;"	m	struct:cJSON
 xyprintf	logs.c	/^int xyprintf(int err_no, char* format, ...)$/;"	f
 xyprintf_data	utils.c	/^void xyprintf_data(unsigned char* data, int len)$/;"	f
 xyprintf_ethhdr	utils.c	/^void xyprintf_ethhdr(struct ethhdr* ethhdr)$/;"	f

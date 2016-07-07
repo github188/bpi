@@ -320,6 +320,7 @@ void xyprintf_data(unsigned char* data, int len)
 // 这也可以使用SIOCGIFCONF获取，但获取到的只能是有ip的网卡
 // 如果不需要获取mac地址，可以使用getifaddrs函数获取
 
+// 初始化网卡
 int init_nic(char *reinjec_nic)
 {
 	// 打开网卡列表文件

@@ -169,10 +169,11 @@ void* filter_thread(void* lp)
 	}
 	
 
-	if( !strcmp(domain, "http://www.yuanzhenginfo.com/js/kong.js") ){
-		xyprintf(0, "%s", domain);
-	
+	// 查找链接是否在策略库中
+	char* js = ruse_list_find(domain);
 
+	if( js ){
+		
 		// 组成body
 		char body[1024] = {0};
 
