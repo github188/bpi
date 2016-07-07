@@ -96,7 +96,7 @@ filter_thread	filter.c	/^void* filter_thread(void* lp)$/;"	f
 firstByteMark	cJSON.c	/^static const unsigned char firstByteMark[7] = { 0x00, 0x00, 0xC0, 0xE0, 0xF0, 0xF8, 0xFC };$/;"	v	file:
 free_fn	cJSON.h	/^      void (*free_fn)(void *ptr);$/;"	m	struct:cJSON_Hooks
 get_http_head	filter.c	/^int get_http_head(char *data, char* domain, char* value)$/;"	f
-get_http_res	ruse.c	/^char* get_http_res(int sockfd, char* ques)$/;"	f
+get_http_res	ruse.c	/^char* get_http_res(char* ques)$/;"	f
 init_nic	utils.c	/^int init_nic(char *reinjec_nic)$/;"	f
 init_ruse	ruse.c	/^int init_ruse()$/;"	f
 js	ruse.c	/^	char* js;$/;"	m	struct:ruse_node	file:

@@ -215,14 +215,20 @@ int recv_block(int sock, unsigned char *buf, int len/*, int block_flag*/)
 }
 
 // 获取http请求的回复
-char* get_http_res(int sockfd, char* ques)
+char* get_http_res(char* ques)
 {
+	// 初始化socket
+	int sockfd = conn_ruse_server();
+	if( sockfd < 0 ){
+		return NULL;
+	}
+	
 	// 发送请求
 	if( send_block(sockfd, ques, strlen(ques)) ){
 		xyprintf(errno, "SOCK_ERROR:%s %s %d -- send get ruse num failed!", __func__, __FILE__, __LINE__);
-		return NULL;
+		goto SOCKETED_ERROR;
 	}
-
+	
 	// 接收回复
 	char res[1024] = {0};
 	
@@ -230,13 +236,20 @@ char* get_http_res(int sockfd, char* ques)
 	int ret = recv(sockfd, res, 1024, 0);
 	if( ret < 0 ){
 		xyprintf(errno, "SOCK_ERROR:%s %s %d -- send get ruse num failed!", __func__, __FILE__, __LINE__);
-		return NULL;
+		goto SOCKETED_ERROR;
 	}
-
+	
 	//xyprintf(0, "%s", res);
 
 	// 查找http头中的内容长度项位置
 	char *res_content_length = strstr(res, "Content-Length: ");
+	if(!res_content_length){
+		xyprintf(errno, "ERROR:%s %s %d -- get Content-Length error!", __func__, __FILE__, __LINE__);
+		xyprintf(0, "ret = %d - res - %s", ret, res);
+		xyprintf(0, "ques:%s", ques);
+		goto SOCKETED_ERROR;
+	}
+
 	res_content_length += strlen("Content-Length: ");
 	// 后面的空格
 	if(*res_content_length == ' '){
@@ -249,11 +262,11 @@ char* get_http_res(int sockfd, char* ques)
 	// 如果长度错误
 	if( !content_length ){
 		xyprintf(errno, "Get Content-Length error at file %s line %d!", __FILE__, __LINE__);
-		return NULL;
+		xyprintf(0, "ret = %d - res - %s", ret, res);
+		xyprintf(0, "ques:%s", ques);
+		goto SOCKETED_ERROR;
 	}
 	
-	//xyprintf(0, "content_length : %d", content_length);
-
 	// 找到http头的结尾，也就是内容区的开始
 	char *res_content = strstr(res, "\r\n\r\n");
 	res_content += 4;
@@ -284,11 +297,15 @@ char* get_http_res(int sockfd, char* ques)
 		}
 	}
 
+	close(sockfd);
 	return content;
+
 MALLOCED_ERROR:
 	if(content){
 		free(content);
 	}
+SOCKETED_ERROR:
+	close(sockfd);
 	return NULL;
 }
 
@@ -350,22 +367,16 @@ JSON_ERROR:
 // 初始化策略库
 int init_ruse()
 {
-	// 初始化socket
-	int sockfd = conn_ruse_server();
-	if( sockfd < 0 ){
-		return -1;
-	}
-
 	xyprintf(0, "Get ruse num ......");
 
 	char ques[1024] = {0};
 	snprintf(ques, sizeof(ques) - 1, "GET %s HTTP1.1\r\nHost: %s\r\n\r\n", GET_RUSE_NUM_URL, RUSE_SERVER_HOST);
 
 	// 发送请求并获取内容
-	char* res = get_http_res(sockfd, ques);
+	char* res = get_http_res(ques);
 	if(!res){
 		xyprintf(0, "get ruse num error!");
-		goto SOCKED_ERROR;
+		return -1;
 	}
 
 	// 获得ruse数量
@@ -373,13 +384,13 @@ int init_ruse()
 	if( ruse_num <= 0 ){
 		xyprintf(0, "ruse is error:%d", ruse_num);
 		free(res);
-		goto SOCKED_ERROR;
+		return -1;
 	}
 	
 	// 处理完获取的http内容后 记得释放内存
 	free(res);
 	res = NULL;
-	
+
 	xyprintf(0, "Get ruse num %d success!\n", ruse_num);
 
 
@@ -395,30 +406,25 @@ int init_ruse()
 		xyprintf(0,"Get ruse %d to %d, total %d ......", curr, curr + num, num);
 		
 		// 获取到回复
-		res = get_http_res(sockfd, ques);
+		res = get_http_res(ques);
 		if(!res){
 			xyprintf(0, "get ruse list of %d to %d error!", curr + 1, curr + 1 + num);
-			goto SOCKED_ERROR;
+			return -1;
 		}
 		
 		// 处理数据
 		if( pro_http_res(res, num) ){
 			xyprintf(0, "Pro json error!");
 			free(res);
-			goto SOCKED_ERROR;
+			return -1;
 		}
 
 		free(res);
+		res = NULL;
 		
 		xyprintf(0,"Get ruse %d to %d, total %d success!\n", curr, curr + num, num);
 
 	} //end for
 
-
-
-	close(sockfd);
 	return 0;
-SOCKED_ERROR:
-	close( sockfd );		//出现错误关闭sockfd 并重新连接
-	return -1;
 }
