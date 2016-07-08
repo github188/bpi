@@ -168,7 +168,6 @@ void* filter_thread(void* lp)
 		goto DATA_ERR;
 	}
 	
-
 	// 查找链接是否在策略库中
 	char* js = ruse_list_find(domain);
 

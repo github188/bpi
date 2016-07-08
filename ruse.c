@@ -9,6 +9,7 @@
 struct ruse_node{
 	struct list_head node;
 	char* url;
+	unsigned int url_len;
 	char* js;
 };
 
@@ -33,6 +34,8 @@ void ruse_list_add(char* url, char* js)
 	node->url = malloc(strlen(url) + 1);
 	memcpy(node->url, url, strlen(url) + 1);
 
+	node->url_len = strlen(url);
+
 	// js
 	node->js = malloc(strlen(js) + 1);
 	memcpy(node->js, js, strlen(js) + 1);
@@ -44,8 +47,8 @@ void ruse_list_add(char* url, char* js)
 	
 	// 计数 并打印内容
 	ruse_list_count ++;
-	xyprintf(0, "ADD : ruse_list_count = %d\nurl: %s\njs:\n%s",
-			ruse_list_count, node->url, node->js);
+	xyprintf(0, "ADD : ruse_list_count = %d\nurl_len: %u\nurl: %s\njs:\n%s",
+			ruse_list_count, node->url_len, node->url, node->js);
 }
 
 /** 
@@ -64,8 +67,8 @@ char* ruse_list_find(char* url)
 		node = (struct ruse_node*)pos;
 		
 		// 判断是不是 是的话直接返回内容
-		if( !strcmp(url, node->url) ){
-			xyprintf(0, "Find - url: %s\njs: %s\n", node->url, node->js);
+		if( !strncmp(url, node->url, node->url_len) ){
+			xyprintf(0, "Find - url: %s\n\t\t\t\t   %s", node->url, url);
 			//	pthread_mutex_unlock(&ruse_list_lock);
 			return node->js;
 		}

@@ -7,8 +7,8 @@
 ADDR	test/header.h	20;"	d
 CC	Makefile	/^CC=gcc$/;"	m
 DEPEND	Makefile	/^DEPEND=cJSON.o ruse.o filter.o logs.o main.o monitor.o send.o utils.o$/;"	m
-GET_RUSE_LIST_URL	ruse.c	81;"	d	file:
-GET_RUSE_NUM_URL	ruse.c	80;"	d	file:
+GET_RUSE_LIST_URL	ruse.c	84;"	d	file:
+GET_RUSE_NUM_URL	ruse.c	83;"	d	file:
 HEADER_H	header.h	7;"	d
 HEADER_H	test/header.h	7;"	d
 INIT_LIST_HEAD	list.h	/^static inline void INIT_LIST_HEAD(struct list_head *list)$/;"	f
@@ -18,11 +18,11 @@ LIST_HEAD	list.h	22;"	d
 LIST_HEAD_INIT	list.h	20;"	d
 MAKE	Makefile	/^MAKE=make$/;"	m
 MAX_LINK_PACKET_SIZE	monitor.c	3;"	d	file:
-ONCE_GET_RUSE_NUM	ruse.c	82;"	d	file:
+ONCE_GET_RUSE_NUM	ruse.c	85;"	d	file:
 PORT	test/header.h	19;"	d
 REINJEC_NIC	header.h	41;"	d
-RUSE_SERVER_HOST	ruse.c	78;"	d	file:
-RUSE_SERVER_PORT	ruse.c	79;"	d	file:
+RUSE_SERVER_HOST	ruse.c	81;"	d	file:
+RUSE_SERVER_PORT	ruse.c	82;"	d	file:
 SOURCE	Makefile	/^SOURCE=cJSON.c ruse.c filter.c logs.c main.c monitor.c send.c utils.c$/;"	m
 TARGET	Makefile	/^TARGET=bpi.out$/;"	m
 WRITE_LOG	header.h	38;"	d
@@ -168,6 +168,7 @@ string	cJSON.h	/^	char *string;				\/* The item's name string, if this item is t
 suffix_object	cJSON.c	/^static void suffix_object(cJSON *prev,cJSON *item) {prev->next=item;item->prev=prev;}$/;"	f	file:
 type	cJSON.h	/^	int type;					\/* The type of the item, as above. *\/$/;"	m	struct:cJSON
 url	ruse.c	/^	char* url;$/;"	m	struct:ruse_node	file:
+url_len	ruse.c	/^	unsigned int url_len;$/;"	m	struct:ruse_node	file:
 valuedouble	cJSON.h	/^	double valuedouble;			\/* The item's number, if type==cJSON_Number *\/$/;"	m	struct:cJSON
 valueint	cJSON.h	/^	int valueint;				\/* The item's number, if type==cJSON_Number *\/$/;"	m	struct:cJSON
 valuestring	cJSON.h	/^	char *valuestring;			\/* The item's string, if type==cJSON_String *\/$/;"	m	struct:cJSON
