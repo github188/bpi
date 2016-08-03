@@ -7,8 +7,8 @@
 ADDR	test/header.h	20;"	d
 CC	Makefile	/^CC=gcc$/;"	m
 DEPEND	Makefile	/^DEPEND=cJSON.o ruse.o filter.o logs.o main.o monitor.o send.o utils.o$/;"	m
-GET_RUSE_LIST_URL	ruse.c	84;"	d	file:
-GET_RUSE_NUM_URL	ruse.c	83;"	d	file:
+GET_RUSE_LIST_URL	ruse.c	11;"	d	file:
+GET_STATUS	ruse.c	10;"	d	file:
 HEADER_H	header.h	7;"	d
 HEADER_H	test/header.h	7;"	d
 INIT_LIST_HEAD	list.h	/^static inline void INIT_LIST_HEAD(struct list_head *list)$/;"	f
@@ -18,11 +18,10 @@ LIST_HEAD	list.h	22;"	d
 LIST_HEAD_INIT	list.h	20;"	d
 MAKE	Makefile	/^MAKE=make$/;"	m
 MAX_LINK_PACKET_SIZE	monitor.c	3;"	d	file:
-ONCE_GET_RUSE_NUM	ruse.c	85;"	d	file:
 PORT	test/header.h	19;"	d
 REINJEC_NIC	header.h	41;"	d
-RUSE_SERVER_HOST	ruse.c	81;"	d	file:
-RUSE_SERVER_PORT	ruse.c	82;"	d	file:
+RUSE_SERVER_HOST	ruse.c	8;"	d	file:
+RUSE_SERVER_PORT	ruse.c	9;"	d	file:
 SOURCE	Makefile	/^SOURCE=cJSON.c ruse.c filter.c logs.c main.c monitor.c send.c utils.c$/;"	m
 TARGET	Makefile	/^TARGET=bpi.out$/;"	m
 WRITE_LOG	header.h	38;"	d
@@ -98,7 +97,7 @@ free_fn	cJSON.h	/^      void (*free_fn)(void *ptr);$/;"	m	struct:cJSON_Hooks
 get_http_head	filter.c	/^int get_http_head(char *data, char* domain, char* value)$/;"	f
 get_http_res	ruse.c	/^char* get_http_res(char* ques)$/;"	f
 init_nic	utils.c	/^int init_nic(char *reinjec_nic)$/;"	f
-init_ruse	ruse.c	/^int init_ruse()$/;"	f
+interval_time	ruse.c	/^static unsigned int interval_time = 300;	\/\/ 获取状态间隔时间$/;"	v	file:
 js	ruse.c	/^	char* js;$/;"	m	struct:ruse_node	file:
 link_packet	header.h	/^struct link_packet{$/;"	s
 list_add	list.h	/^static inline void list_add(struct list_head *new, struct list_head *head)$/;"	f
@@ -108,6 +107,7 @@ list_empty	list.h	/^static inline int list_empty(const struct list_head *head)$/
 list_for_each	list.h	112;"	d
 list_for_each_prev	list.h	120;"	d
 list_head	list.h	/^struct list_head {$/;"	s
+local_last_time	ruse.c	/^static time_t local_last_time = 0;			\/\/ 策略库最后更新时间$/;"	v	file:
 log_day	logs.c	/^int				log_day;			\/\/ 当前log文件对应的日期-天$/;"	v
 log_name	logs.c	/^char			log_name[32];		\/\/ log文件前缀名$/;"	v
 logs_buf	logs.c	/^static char logs_buf[8192];			\/\/ log内容$/;"	v	file:
@@ -145,18 +145,21 @@ print_string	cJSON.c	/^static char *print_string(cJSON *item)	{return print_stri
 print_string_ptr	cJSON.c	/^static char *print_string_ptr(const char *str)$/;"	f	file:
 print_value	cJSON.c	/^static char *print_value(cJSON *item,int depth,int fmt)$/;"	f	file:
 printf_time	test/utils.c	/^void printf_time()$/;"	f
-pro_http_res	ruse.c	/^int pro_http_res(char* res, int num)$/;"	f
+pro_ruse_list_res	ruse.c	/^int pro_ruse_list_res(char* res, unsigned int num)$/;"	f
+pro_status_res	ruse.c	/^int pro_status_res(char* res, unsigned int* ruse_num, time_t* server_last_time)$/;"	f
 recv_block	ruse.c	/^int recv_block(int sock, unsigned char *buf, int len\/*, int block_flag*\/)$/;"	f
 reinjec_mac	filter.c	/^unsigned char reinjec_mac[6] = {0};$/;"	v
 reinjec_mtu	filter.c	/^short reinjec_mtu = 0;$/;"	v
 reinjec_test	send.c	/^int reinjec_test(unsigned char* buf, int len, struct sockaddr_in* toaddr, unsigned int toaddr_len)$/;"	f
 run	main.c	/^void run()$/;"	f
 ruse_list_add	ruse.c	/^void ruse_list_add(char* url, char* js)$/;"	f
-ruse_list_count	ruse.c	/^static int ruse_list_count = 0;$/;"	v	file:
+ruse_list_clean	ruse.c	/^void ruse_list_clean()$/;"	f
+ruse_list_count	ruse.c	/^static int ruse_list_count = 0;				\/\/ 策略链表计数器$/;"	v	file:
 ruse_list_find	ruse.c	/^char* ruse_list_find(char* url)$/;"	f
-ruse_list_head	ruse.c	/^LIST_HEAD(ruse_list_head);$/;"	v
+ruse_list_head	ruse.c	/^LIST_HEAD(ruse_list_head);					\/\/ 策略链表$/;"	v
 ruse_list_size	ruse.c	/^static unsigned int ruse_list_size = sizeof(struct ruse_node);$/;"	v	file:
 ruse_node	ruse.c	/^struct ruse_node{$/;"	s	file:
+ruse_thread	ruse.c	/^void* ruse_thread(void *fd)$/;"	f
 send_block	ruse.c	/^int send_block(int sock, unsigned char *buf, int len)$/;"	f
 send_http	send.c	/^void send_http(struct ip* s_ip, struct tcphdr* s_tcp, unsigned int data_len, char* res_str)$/;"	f
 send_rst_test	send.c	/^void send_rst_test(struct ip* s_ip, struct tcphdr* s_tcp, unsigned int data_len)$/;"	f

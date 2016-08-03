@@ -28,18 +28,20 @@ void run()
 			*************************************************************************\n",
 			getpid() );
 
+	// 初始化网卡
 	if( init_nic(REINJEC_NIC) ){
 		xyprintf(0, "Init Nic failed, 10s exit!");
 		sleep(10);
 		exit(0);
 	}
-	
-	if( init_ruse() ){
-		xyprintf(0, "Init Ruse failed, 10s exit!");
-		sleep(10);
-		exit(0);
-	}
 
+	/****************策略库更新线程****************************************************/
+	pthread_t pt;
+	if( pthread_create(&pt, NULL, ruse_thread, NULL) != 0 ){
+		xyprintf(errno, "PTHREAD_ERROR: %s %d -- pthread_create()", __FILE__, __LINE__);
+	}
+	/**********************************************************************************/
+	
 	//打印程序开启信息
 	xyprintf(0, "\n\t\t\t*************************************************************************\n\
 			****                                                                 ****\n\
@@ -50,12 +52,6 @@ void run()
 
 //	pthread_mutex_init(&gv_authenticate_list_lock, 0);
 
-	/****************平台连接监视线程**************************************************/
-//	pthread_t pt;
-//	if( pthread_create(&pt, NULL, platform_conn_thread, NULL) != 0 ){
-//		xyprintf(errno, "PTHREAD_ERROR: %s %d -- pthread_create()", __FILE__, __LINE__);
-//	}
-	/**********************************************************************************/
 
 	while(1){
 		monitor_thread(0);

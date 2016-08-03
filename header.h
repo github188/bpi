@@ -81,7 +81,7 @@ void monitor_thread();
 
 // ruse
 char* ruse_list_find(char* url);
-int init_ruse();
+void* ruse_thread(void* fd);
 
 
 #endif

@@ -5,6 +5,11 @@
  *****************************************************/
 #include "header.h"
 
+#define RUSE_SERVER_HOST	"ad.yuanzhenginfo.com"
+#define RUSE_SERVER_PORT	80
+#define GET_STATUS			"/get_status"
+#define GET_RUSE_LIST_URL	"/get_ruse_list"
+
 // 策略节点
 struct ruse_node{
 	struct list_head node;
@@ -16,13 +21,13 @@ struct ruse_node{
 // 策略节点字节长度
 static unsigned int ruse_list_size = sizeof(struct ruse_node);
 
-// 策略链表
-LIST_HEAD(ruse_list_head);
-
+LIST_HEAD(ruse_list_head);					// 策略链表
+static int ruse_list_count = 0;				// 策略链表计数器
 //static pthread_mutex_t ruse_list_lock;
 
-// 策略链表计数器
-static int ruse_list_count = 0;
+static unsigned int interval_time = 300;	// 获取状态间隔时间
+static time_t local_last_time = 0;			// 策略库最后更新时间
+
 
 // 策略添加函数
 void ruse_list_add(char* url, char* js)
@@ -41,14 +46,44 @@ void ruse_list_add(char* url, char* js)
 	memcpy(node->js, js, strlen(js) + 1);
 
 	// 添加到链表中
-//	pthread_mutex_lock(&ruse_list_lock);
 	list_add(&(node->node), &ruse_list_head);
-//	pthread_mutex_unlock(&ruse_list_lock);
 	
 	// 计数 并打印内容
 	ruse_list_count ++;
-	xyprintf(0, "ADD : ruse_list_count = %d\nurl_len: %u\nurl: %s\njs:\n%s",
-			ruse_list_count, node->url_len, node->url, node->js);
+	//xyprintf(0, "RUSE_LIST - ADD : ruse_list_count = %d\nurl_len: %u\nurl: %s\njs:\n%s",
+	//		ruse_list_count, node->url_len, node->url, node->js);
+	xyprintf(0, "RUSE_LIST - ADD : ruse_list_count = %d\n\t\t\t\t%s",
+			ruse_list_count, node->url);
+}
+
+/** 
+ *@brief 清空链表
+ *@return js
+ */
+void ruse_list_clean()
+{
+	struct list_head* pos;
+	struct ruse_node* node;
+
+	// 逐条删除
+	pos = ruse_list_head.next;
+	while( pos != &ruse_list_head ){
+		
+		// 删除
+		list_del( pos );
+		ruse_list_count--;
+		xyprintf(0, "RUSE_LIST - DEL : ruse_list_count = %d\n\t\t\t\t%s",
+				ruse_list_count, node->url);
+	
+		// 释放内存
+		node = (struct ruse_node*)pos;
+		
+		free( node->js );
+		free( node->url );
+		free( node );
+
+		pos = ruse_list_head.next;
+	}
 }
 
 /** 
@@ -78,16 +113,10 @@ char* ruse_list_find(char* url)
 	return NULL;
 }
 
-#define RUSE_SERVER_HOST	"ad.yuanzhenginfo.com"
-#define RUSE_SERVER_PORT	80
-#define GET_RUSE_NUM_URL	"/get_ruse_num"
-#define GET_RUSE_LIST_URL	"/get_ruse_list"
-#define ONCE_GET_RUSE_NUM	10
-
 // 连接服务器
 int conn_ruse_server()
 {
-	xyprintf(0, "Connect %s:%d ......", RUSE_SERVER_HOST, RUSE_SERVER_PORT);
+	xyprintf(0, "Connect to %s:%d ......", RUSE_SERVER_HOST, RUSE_SERVER_PORT);
 	
 	int sockfd;
     struct sockaddr_in addr;
@@ -113,7 +142,7 @@ int conn_ruse_server()
 		return -1;
 	}
 
-	xyprintf(0, "Connect %s:%d success!\n", RUSE_SERVER_HOST, RUSE_SERVER_PORT);
+	xyprintf(0, "Connect to %s:%d success!", RUSE_SERVER_HOST, RUSE_SERVER_PORT);
 
 	return sockfd;
 }
@@ -225,13 +254,17 @@ char* get_http_res(char* ques)
 	if( sockfd < 0 ){
 		return NULL;
 	}
-	
+
+	xyprintf(0, "Send request ......");
 	// 发送请求
 	if( send_block(sockfd, ques, strlen(ques)) ){
 		xyprintf(errno, "SOCK_ERROR:%s %s %d -- send get ruse num failed!", __func__, __FILE__, __LINE__);
 		goto SOCKETED_ERROR;
 	}
 	
+	
+	xyprintf(0, "Recv reply ......");
+
 	// 接收回复
 	char res[1024] = {0};
 	
@@ -300,6 +333,8 @@ char* get_http_res(char* ques)
 		}
 	}
 
+	xyprintf(0, "Recv reply complete, close socket!\n");
+
 	close(sockfd);
 	return content;
 
@@ -312,7 +347,64 @@ SOCKETED_ERROR:
 	return NULL;
 }
 
-int pro_http_res(char* res, int num)
+
+// 处理get status 请求回复
+int pro_status_res(char* res, unsigned int* ruse_num, time_t* server_last_time)
+{
+	// 主体json
+	cJSON *json = cJSON_Parse( res );
+	if (!json){
+		xyprintf(0, "JSON's data error -- %s -- %d!!!", __FILE__, __LINE__);
+		return -1;
+	}
+
+	// 间隔时间
+	cJSON *interval_time_json = cJSON_GetObjectItem(json, "Interval_time");
+	if(!interval_time_json){
+		xyprintf(0,"JSON's data error -- %s -- %d!!!", __FILE__, __LINE__);
+		goto JSON_ERROR;
+	}
+
+	// 策略库数量
+	cJSON *ruse_num_json = cJSON_GetObjectItem(json, "strategynum");
+	if(!ruse_num_json){
+		xyprintf(0,"JSON's data error -- %s -- %d!!!", __FILE__, __LINE__);
+		goto JSON_ERROR;
+	}
+	
+	// 策略库的最后更新时间
+	cJSON *server_last_time_json = cJSON_GetObjectItem(json, "lasttime");
+	if(!server_last_time_json){
+		xyprintf(0,"JSON's data error -- %s -- %d!!!", __FILE__, __LINE__);
+		goto JSON_ERROR;
+	}
+
+	// 获取间隔时间
+	if( interval_time_json->valueint > 3600 || interval_time_json->valueint < 60 ){
+		interval_time = 300;
+	}
+	else {
+		interval_time = interval_time_json->valueint;
+	}
+
+	// 获取策略库数量
+	if( ruse_num_json->valueint > 0 ){
+		*ruse_num = ruse_num_json->valueint;
+	}
+
+	// 获取服务器的最后更新时间
+	*server_last_time = (time_t)atol(server_last_time_json->valuestring);
+
+	cJSON_Delete(json);
+	return 0;
+
+JSON_ERROR:
+	cJSON_Delete(json);
+	return -1;
+}
+
+// 处理ruse list请求回复
+int pro_ruse_list_res(char* res, unsigned int num)
 {
 
 	// 主体json
@@ -328,6 +420,9 @@ int pro_http_res(char* res, int num)
 		xyprintf(0, "Json data error, ques num is %d, get num is %d!", num, array_num);
 		goto JSON_ERROR;
 	}
+
+	// 清空原链表中的内容
+	ruse_list_clean();
 
 	// 循环读取数组中的数据
 	cJSON* item = NULL, *js_url = NULL, *replace_con = NULL;
@@ -367,67 +462,84 @@ JSON_ERROR:
 }
 
 
-// 初始化策略库
-int init_ruse()
+// 策略库更新线程
+void* ruse_thread(void *fd)
 {
-	xyprintf(0, "Get ruse num ......");
+	pthread_detach(pthread_self());
 
-	char ques[1024] = {0};
-	snprintf(ques, sizeof(ques) - 1, "GET %s HTTP1.1\r\nHost: %s\r\n\r\n", GET_RUSE_NUM_URL, RUSE_SERVER_HOST);
-
-	// 发送请求并获取内容
-	char* res = get_http_res(ques);
-	if(!res){
-		xyprintf(0, "get ruse num error!");
-		return -1;
-	}
-
-	// 获得ruse数量
-	int ruse_num = atoi(res);
-	if( ruse_num <= 0 ){
-		xyprintf(0, "ruse is error:%d", ruse_num);
-		free(res);
-		return -1;
-	}
+	char mac[64] = {0};
 	
-	// 处理完获取的http内容后 记得释放内存
-	free(res);
-	res = NULL;
+	snprintf(mac, sizeof(mac) - 1, "%02x:%02x:%02x:%02x:%02x:%02x",
+			reinjec_mac[0], reinjec_mac[1], reinjec_mac[2],
+			reinjec_mac[3], reinjec_mac[4], reinjec_mac[5]);
 
-	xyprintf(0, "Get ruse num %d success!\n", ruse_num);
+	while(1){
+		// 组成获取状态请求字符串
+		char ques[1024] = {0};
+		snprintf(ques, sizeof(ques) - 1, "GET %s?mac=%s HTTP1.1\r\nHost: %s\r\n\r\n",
+				GET_STATUS, mac, RUSE_SERVER_HOST);
 
-
-	// 循环读取策略库
-	int curr = 0;
-	for( ;curr < ruse_num; curr += ONCE_GET_RUSE_NUM ){
-		
-		// 获取 curr 到 curr+ONCE_GET_RUSE_NUM 或者是末尾的条目
-		int num = (ruse_num - curr >= ONCE_GET_RUSE_NUM) ? ONCE_GET_RUSE_NUM : ruse_num - curr;
-		snprintf(ques, sizeof(ques) - 1, "GET %s?begin=%d&num=%d HTTP1.1\r\nHost: %s\r\n\r\n",
-				GET_RUSE_LIST_URL, curr, num, RUSE_SERVER_HOST);
-		
-		xyprintf(0,"Get ruse %d to %d, total %d ......", curr, curr + num, num);
-		
-		// 获取到回复
-		res = get_http_res(ques);
+		xyprintf(0, "Get status ......");
+		// 发送请求并获取内容
+		char* res = get_http_res(ques);
 		if(!res){
-			xyprintf(0, "get ruse list of %d to %d error!", curr + 1, curr + 1 + num);
-			return -1;
-		}
-		
-		// 处理数据
-		if( pro_http_res(res, num) ){
-			xyprintf(0, "Pro json error!");
-			free(res);
-			return -1;
+			xyprintf(0, "ERROR : get status error!");
+			sleep(interval_time);
+			continue;
 		}
 
+		unsigned int ruse_num = 0;
+		time_t server_last_time;
+		// 解析status回复内容
+		if( pro_status_res(res, &ruse_num, &server_last_time) ){
+			xyprintf(0, "ERROR : status content error!");
+			sleep(interval_time);
+			continue;
+		}
+
+		xyprintf(0, "Get status success, interval time is %u, ruse num is %u, server last time is %u\n",
+					interval_time, ruse_num, server_last_time);
+
+		// 处理完获取的http内容后 记得释放内存
 		free(res);
 		res = NULL;
+
+		// 是否需要更新策略库
+		if(local_last_time != server_last_time){
+			
+			xyprintf(0, "Get ruse ......");
+
+			snprintf(ques, sizeof(ques) - 1, "GET %s?begin=0&num=%u HTTP1.1\r\nHost: %s\r\n\r\n",
+					GET_RUSE_LIST_URL, ruse_num, RUSE_SERVER_HOST);
 		
-		xyprintf(0,"Get ruse %d to %d, total %d success!\n", curr, curr + num, num);
-
-	} //end for
-
-	return 0;
+			// 获取到回复
+			res = get_http_res(ques);
+			if(!res){
+				xyprintf(0, "get ruse list error!");
+				sleep(interval_time);
+				continue;
+			}
+		
+			// 处理数据
+			if( pro_ruse_list_res(res, ruse_num) ){
+				xyprintf(0, "Pro ruse list json error!");
+				free(res);
+				sleep(interval_time);
+				continue;
+			}
+	
+			// 处理完获取的http内容后 记得释放内存
+			free(res);
+			res = NULL;
+		
+			// 更新结束 修改本地时间
+			local_last_time = server_last_time;
+			
+			xyprintf(0,"Get ruse succcess!\n");
+		}// end if
+		
+		// 间隔时间
+		sleep(interval_time);
+	}// end while(1)
+	pthread_exit(NULL);
 }
