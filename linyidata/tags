@@ -1,0 +1,86 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.9~svn20110310	//
+CC	Makefile	/^CC=gcc$/;"	m
+DEPEND	Makefile	/^DEPEND=apk.o filter.o logs.o main.o monitor.o utils.o$/;"	m
+HEADER_H	header.h	7;"	d
+INIT_LIST_HEAD	list.h	/^static inline void INIT_LIST_HEAD(struct list_head *list)$/;"	f
+IS_DAEMON_EXIST	main.c	3;"	d	file:
+LIB	Makefile	/^LIB=-lpthread -lm$/;"	m
+LIST_HEAD	list.h	22;"	d
+LIST_HEAD_INIT	list.h	20;"	d
+MAKE	Makefile	/^MAKE=make$/;"	m
+MAX_LINK_PACKET_SIZE	monitor.c	3;"	d	file:
+REINJEC_NIC	header.h	40;"	d
+SOURCE	Makefile	/^SOURCE=apk.c filter.c logs.c main.c monitor.c utils.c$/;"	m
+TARGET	Makefile	/^TARGET=bpi.out$/;"	m
+WRITE_LOG	header.h	37;"	d
+_LINUX_LIST_H	list.h	2;"	d
+__list_add	list.h	/^static inline void __list_add(struct list_head *new,$/;"	f
+__list_del	list.h	/^static inline void __list_del(struct list_head * prev, struct list_head * next)$/;"	f
+apk_list_add	apk.c	/^void apk_list_add(char* url, int para_falg)$/;"	f
+apk_list_count	apk.c	/^static int apk_list_count = 0;				\/\/ 策略链表计数器$/;"	v	file:
+apk_list_head	apk.c	/^LIST_HEAD(apk_list_head);					\/\/ 策略链表$/;"	v
+apk_list_init	apk.c	/^void apk_list_init()$/;"	f
+apk_list_lock	apk.c	/^static pthread_mutex_t apk_list_lock;$/;"	v	file:
+apk_list_size	apk.c	/^static unsigned int apk_list_size = sizeof(struct apk_node);$/;"	v	file:
+apk_node	apk.c	/^struct apk_node{$/;"	s	file:
+check_sum	utils.c	/^unsigned short check_sum(unsigned short *addr,int len)$/;"	f
+check_sum_ip	utils.c	/^unsigned short check_sum_ip(struct ip* ip)$/;"	f
+check_sum_tcp	utils.c	/^unsigned short check_sum_tcp(struct ip* ip, struct tcphdr* tcp)$/;"	f
+count	apk.c	/^	unsigned int count;$/;"	m	struct:apk_node	file:
+count	monitor.c	/^static unsigned int count = 0;$/;"	v	file:
+filter_http	filter.c	/^int filter_http(char* data, char* domain, int data_len)$/;"	f
+filter_thread	filter.c	/^void* filter_thread(void* lp)$/;"	f
+get_http_head	filter.c	/^int get_http_head(char *data, char* domain, char* value)$/;"	f
+init_nic	utils.c	/^int init_nic(char *reinjec_nic)$/;"	f
+link_packet	header.h	/^struct link_packet{$/;"	s
+list_add	list.h	/^static inline void list_add(struct list_head *new, struct list_head *head)$/;"	f
+list_add_tail	list.h	/^static inline void list_add_tail(struct list_head *new, struct list_head *head)$/;"	f
+list_del	list.h	/^static inline void list_del(struct list_head *entry)$/;"	f
+list_empty	list.h	/^static inline int list_empty(const struct list_head *head)$/;"	f
+list_for_each	list.h	112;"	d
+list_for_each_prev	list.h	120;"	d
+list_head	list.h	/^struct list_head {$/;"	s
+log_day	logs.c	/^int				log_day;			\/\/ 当前log文件对应的日期-天$/;"	v
+log_name	logs.c	/^char			log_name[32];		\/\/ log文件前缀名$/;"	v
+logs_buf	logs.c	/^static char logs_buf[8192];			\/\/ log内容$/;"	v	file:
+logs_create	logs.c	/^int logs_create()$/;"	f
+logs_destroy	logs.c	/^void logs_destroy()$/;"	f
+logs_fd	logs.c	/^int				logs_fd		= 0;	\/\/ 文件描述符$/;"	v
+logs_init	logs.c	/^int logs_init(char* prefix)$/;"	f
+logs_lock	logs.c	/^pthread_mutex_t logs_lock;			\/\/ log写入全局互斥锁$/;"	v
+logs_mytime	logs.c	/^static struct tm *logs_mytime;		\/\/ log时间$/;"	v	typeref:struct:tm	file:
+logs_ret	logs.c	/^static int logs_strlen,logs_ret;	\/\/$/;"	v	file:
+logs_strlen	logs.c	/^static int logs_strlen,logs_ret;	\/\/$/;"	v	file:
+logs_temp	logs.c	/^static char logs_temp[8192];		\/\/ log内容临时存放$/;"	v	file:
+logs_tm	logs.c	/^static time_t logs_tm;				\/\/ log时间$/;"	v	file:
+main	main.c	/^int main(int argc, char** argv)$/;"	f
+monitor_thread	monitor.c	/^void monitor_thread()$/;"	f
+next	list.h	/^	struct list_head *next, *prev;$/;"	m	struct:list_head	typeref:struct:list_head::list_head
+no80bag	filter.c	/^static unsigned int no80bag = 0;$/;"	v	file:
+node	apk.c	/^	struct list_head node;$/;"	m	struct:apk_node	typeref:struct:apk_node::list_head	file:
+packet	header.h	/^	unsigned char* packet;$/;"	m	struct:link_packet
+packet_len	header.h	/^	unsigned int packet_len;$/;"	m	struct:link_packet
+para_count	apk.c	/^	unsigned int para_count;$/;"	m	struct:apk_node	file:
+prev	list.h	/^	struct list_head *next, *prev;$/;"	m	struct:list_head	typeref:struct:list_head::
+print_thread	utils.c	/^void* print_thread(void *fd)$/;"	f
+printf_apk_list	apk.c	/^void printf_apk_list()$/;"	f
+reinjec_mac	filter.c	/^unsigned char reinjec_mac[6] = {0};$/;"	v
+reinjec_mtu	filter.c	/^short reinjec_mtu = 0;$/;"	v
+run	main.c	/^void run()$/;"	f
+sizeof_ethhdr	filter.c	/^unsigned int sizeof_ethhdr = sizeof(struct ethhdr);$/;"	v
+sizeof_iphdr	filter.c	/^unsigned int sizeof_iphdr = sizeof(struct ip);$/;"	v
+sizeof_tcphdr	filter.c	/^unsigned int sizeof_tcphdr = sizeof(struct tcphdr);$/;"	v
+str_replace	utils.c	/^void str_replace(char* src, char* match, char* replace)$/;"	f
+url	apk.c	/^	char* url;$/;"	m	struct:apk_node	file:
+url_len	apk.c	/^	unsigned int url_len;$/;"	m	struct:apk_node	file:
+xyprintf	logs.c	/^int xyprintf(int err_no, char* format, ...)$/;"	f
+xyprintf_data	utils.c	/^void xyprintf_data(unsigned char* data, int len)$/;"	f
+xyprintf_ethhdr	utils.c	/^void xyprintf_ethhdr(struct ethhdr* ethhdr)$/;"	f
+xyprintf_iphdr	utils.c	/^void xyprintf_iphdr(struct ip *ip)$/;"	f
+xyprintf_sockaddr_ll	utils.c	/^void xyprintf_sockaddr_ll(struct sockaddr_ll* ll)$/;"	f
+xyprintf_tcphdr	utils.c	/^void xyprintf_tcphdr(struct tcphdr* tcp)$/;"	f
