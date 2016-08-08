@@ -28,32 +28,41 @@ static int ruse_list_count = 0;				// 策略链表计数器
 static unsigned int interval_time = 300;	// 获取状态间隔时间
 static time_t local_last_time = 0;			// 策略库最后更新时间
 
+static char device_sn[64] = {0};			// 设备序号
+static unsigned int device_sn_size = 0;		// 设备序号长度
 
 // 策略添加函数
 void ruse_list_add(char* url, char* js)
 {
 	// 申请节点空间
 	struct ruse_node *node = malloc(ruse_list_size);
-	
+
+	// 去掉头部
+	if( !strncmp(url, "http://", 7) ){
+		url += 7;
+	}
+
 	// 申请字符串空间 url
 	node->url = malloc(strlen(url) + 1);
 	memcpy(node->url, url, strlen(url) + 1);
 
+	// 字符串长度
 	node->url_len = strlen(url);
 
-	// js
-	node->js = malloc(strlen(js) + 1);
-	memcpy(node->js, js, strlen(js) + 1);
+	// TODO 这个申请空间的方法是会有问题的
+	node->js = malloc(strlen(js) + device_sn_size);
+	strcpy(node->js, js);
+	str_replace(node->js, "<%deviceNO%>", device_sn);
 
 	// 添加到链表中
 	list_add(&(node->node), &ruse_list_head);
 	
 	// 计数 并打印内容
 	ruse_list_count ++;
-	//xyprintf(0, "RUSE_LIST - ADD : ruse_list_count = %d\nurl_len: %u\nurl: %s\njs:\n%s",
-	//		ruse_list_count, node->url_len, node->url, node->js);
-	xyprintf(0, "RUSE_LIST - ADD : ruse_list_count = %d\n\t\t\t\t%s",
-			ruse_list_count, node->url);
+	xyprintf(0, "RUSE_LIST - ADD : ruse_list_count = %d\nurl_len: %u\nurl: %s\njs:\n%s",
+			ruse_list_count, node->url_len, node->url, node->js);
+	//xyprintf(0, "RUSE_LIST - ADD : ruse_list_count = %d\n\t\t\t\t%s",
+	//		ruse_list_count, node->url);
 }
 
 /** 
@@ -117,7 +126,6 @@ char* ruse_list_find(char* url)
 int conn_ruse_server()
 {
 	xyprintf(0, "Connect to %s:%d ......", RUSE_SERVER_HOST, RUSE_SERVER_PORT);
-	
 	int sockfd;
     struct sockaddr_in addr;
 	
@@ -129,6 +137,10 @@ int conn_ruse_server()
 
 	// 域名解析
 	struct hostent* hostent = gethostbyname( RUSE_SERVER_HOST );
+	if(!hostent){
+		xyprintf(errno, "ERROR:%s %d -- gethostbyname()", __FILE__, __LINE__);
+		return -1;
+	}
 	addr.sin_addr.s_addr	= *(unsigned long *)hostent->h_addr;
 
 	xyprintf(0, "GET %s host %s success!", RUSE_SERVER_HOST, inet_ntoa(addr.sin_addr));
@@ -255,13 +267,12 @@ char* get_http_res(char* ques)
 		return NULL;
 	}
 
-	xyprintf(0, "Send request ......");
+	xyprintf(0, "Send request ......\n%s", ques);
 	// 发送请求
 	if( send_block(sockfd, ques, strlen(ques)) ){
 		xyprintf(errno, "SOCK_ERROR:%s %s %d -- send get ruse num failed!", __func__, __FILE__, __LINE__);
 		goto SOCKETED_ERROR;
 	}
-	
 	
 	xyprintf(0, "Recv reply ......");
 
@@ -281,8 +292,8 @@ char* get_http_res(char* ques)
 	char *res_content_length = strstr(res, "Content-Length: ");
 	if(!res_content_length){
 		xyprintf(errno, "ERROR:%s %s %d -- get Content-Length error!", __func__, __FILE__, __LINE__);
-		xyprintf(0, "ret = %d - res - %s", ret, res);
-		xyprintf(0, "ques:%s", ques);
+		xyprintf(0, "res:\n%s\n", res);
+		xyprintf(0, "ques:%s\n", ques);
 		goto SOCKETED_ERROR;
 	}
 
@@ -406,7 +417,6 @@ JSON_ERROR:
 // 处理ruse list请求回复
 int pro_ruse_list_res(char* res, unsigned int num)
 {
-
 	// 主体json
 	cJSON *json = cJSON_Parse( res );
 	if (!json){
@@ -448,10 +458,14 @@ int pro_ruse_list_res(char* res, unsigned int num)
 			xyprintf(0,"JSON's data error -- %s -- %d!", __FILE__, __LINE__);
 			goto JSON_ERROR;
 		}
-		
-		ruse_list_add(js_url->valuestring, replace_con->valuestring);
-	}
 
+		if( js_url->valuestring && replace_con->valuestring ){
+			ruse_list_add(js_url->valuestring, replace_con->valuestring);
+		}
+		else {
+			xyprintf(0, "Wrining: A empty url or replace_con!");
+		}
+	}
 
 	cJSON_Delete(json);
 	return 0;
@@ -467,17 +481,24 @@ void* ruse_thread(void *fd)
 {
 	pthread_detach(pthread_self());
 
-	char mac[64] = {0};
-	
-	snprintf(mac, sizeof(mac) - 1, "%02x:%02x:%02x:%02x:%02x:%02x",
+	xyprintf(0, "Ruse thread initing ......");
+
+	// 设备序号
+	snprintf(device_sn, sizeof(device_sn) - 1, "%02x:%02x:%02x:%02x:%02x:%02x",
 			reinjec_mac[0], reinjec_mac[1], reinjec_mac[2],
 			reinjec_mac[3], reinjec_mac[4], reinjec_mac[5]);
+
+	device_sn_size = strlen(device_sn);
+
+	xyprintf(0, "device sn is %s, size is %u", device_sn, device_sn_size);
+	
+	xyprintf(0, "Ruse thread running ......\n");
 
 	while(1){
 		// 组成获取状态请求字符串
 		char ques[1024] = {0};
 		snprintf(ques, sizeof(ques) - 1, "GET %s?mac=%s HTTP1.1\r\nHost: %s\r\n\r\n",
-				GET_STATUS, mac, RUSE_SERVER_HOST);
+				GET_STATUS, device_sn, RUSE_SERVER_HOST);
 
 		xyprintf(0, "Get status ......");
 		// 发送请求并获取内容
@@ -519,7 +540,7 @@ void* ruse_thread(void *fd)
 				sleep(interval_time);
 				continue;
 			}
-		
+
 			// 处理数据
 			if( pro_ruse_list_res(res, ruse_num) ){
 				xyprintf(0, "Pro ruse list json error!");

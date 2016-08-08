@@ -424,3 +424,47 @@ FILEED_ERROR:
 	fclose(file);
 	return -1;
 }
+
+// 字符串替换
+void str_replace(char* src, char* match, char* replace)
+{
+	char temp[4096];			// 临时空间
+	int befor_len = 0;			// 标志前字符长度
+
+	// 查找匹配关键字
+	char* find_pos = strstr(src, match);
+
+	// 循环替换
+	while( find_pos ){
+		// 清空临时空间 将字符串组装到临时空间内
+		memset(temp, 0, sizeof(temp));
+
+		befor_len = find_pos - src;
+
+		// 匹配关键字前字符
+		strncpy(temp, src, befor_len);
+		// 匹配关键字
+		strcat(temp, replace);
+		// 匹配关键字后字符
+		strcat(temp, find_pos + strlen(match));
+		
+		strcpy(src, temp);
+
+		find_pos = strstr(src, match);
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -89,8 +89,10 @@ child	cJSON.h	/^	struct cJSON *child;		\/* An array or object item will have a c
 conn_ruse_server	ruse.c	/^int conn_ruse_server()$/;"	f
 count	monitor.c	/^static unsigned int count = 0;$/;"	v	file:
 create_reference	cJSON.c	/^static cJSON *create_reference(cJSON *item) {cJSON *ref=cJSON_New_Item();if (!ref) return 0;memcpy(ref,item,sizeof(cJSON));ref->string=0;ref->type|=cJSON_IsReference;ref->next=ref->prev=0;return ref;}$/;"	f	file:
+device_sn	ruse.c	/^static char device_sn[64] = {0};			\/\/ 设备序号$/;"	v	file:
+device_sn_size	ruse.c	/^static unsigned int device_sn_size = 0;		\/\/ 设备序号长度$/;"	v	file:
 ep	cJSON.c	/^static const char *ep;$/;"	v	file:
-filter_http	filter.c	/^int filter_http(char* data, char* domain)$/;"	f
+filter_http	filter.c	/^int filter_http(char* data, char* domain, int data_len)$/;"	f
 filter_thread	filter.c	/^void* filter_thread(void* lp)$/;"	f
 firstByteMark	cJSON.c	/^static const unsigned char firstByteMark[7] = { 0x00, 0x00, 0xC0, 0xE0, 0xF0, 0xF8, 0xFC };$/;"	v	file:
 free_fn	cJSON.h	/^      void (*free_fn)(void *ptr);$/;"	m	struct:cJSON_Hooks
@@ -167,6 +169,7 @@ sizeof_ethhdr	filter.c	/^unsigned int sizeof_ethhdr = sizeof(struct ethhdr);$/;"
 sizeof_iphdr	filter.c	/^unsigned int sizeof_iphdr = sizeof(struct ip);$/;"	v
 sizeof_tcphdr	filter.c	/^unsigned int sizeof_tcphdr = sizeof(struct tcphdr);$/;"	v
 skip	cJSON.c	/^static const char *skip(const char *in) {while (in && *in && (unsigned char)*in<=32) in++; return in;}$/;"	f	file:
+str_replace	utils.c	/^void str_replace(char* src, char* match, char* replace)$/;"	f
 string	cJSON.h	/^	char *string;				\/* The item's name string, if this item is the child of, or is in the list of subitems of an object. *\/$/;"	m	struct:cJSON
 suffix_object	cJSON.c	/^static void suffix_object(cJSON *prev,cJSON *item) {prev->next=item;item->prev=prev;}$/;"	f	file:
 type	cJSON.h	/^	int type;					\/* The type of the item, as above. *\/$/;"	m	struct:cJSON

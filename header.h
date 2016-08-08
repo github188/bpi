@@ -61,6 +61,7 @@ void xyprintf_tcphdr(struct tcphdr* tcp);
 void xyprintf_iphdr(struct ip *ip);
 void xyprintf_ethhdr(struct ethhdr* ethhdr);
 void xyprintf_data(unsigned char* data, int len);
+void str_replace(char* src, char* match, char* replace);
 
 
 int init_nic(char *reinjec_nic);
