@@ -45,7 +45,10 @@ int filter_http(char* data, char* domain, int data_len)
 	}
 	
 	char *temp = strchr(data_path, ' ');
-	char path[1024] = {0};
+	if( !temp ){
+		xyprintf(0, "There is an error is not find empty");
+	}
+	char path[1028] = {0};
 	if(temp - data_path > 1000){
 		return -1;
 	}
