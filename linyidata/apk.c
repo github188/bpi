@@ -20,9 +20,13 @@ LIST_HEAD(apk_list_head);					// 策略链表
 static int apk_list_count = 0;				// 策略链表计数器
 static pthread_mutex_t apk_list_lock;
 
+//处理时间测试 -- 开始时间
+static time_t start;
+
 void apk_list_init()
 {
 	pthread_mutex_init(&apk_list_lock, 0);
+	start = time(0);
 }
 
 // 策略添加函数
@@ -87,8 +91,12 @@ void printf_apk_list()
 	struct list_head* pos;
 	struct apk_node* node;
 
-	// 开始遍历
+	// 头部信息
+	time_t now = time(0);
+	xyprintf(0, "now - start = %d", now - start);
 	xyprintf(0, "url\tcount\tpara_count\n\t\tapk_list_count = %u", apk_list_count);
+	
+	// 开始遍历
 	pthread_mutex_lock(&apk_list_lock);
 	for( pos = apk_list_head.next; pos != &apk_list_head; pos = pos->next ){
 		node = (struct apk_node*)pos;

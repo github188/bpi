@@ -165,14 +165,14 @@ void* filter_thread(void* lp)
 		goto DATA_ERR;
 	}
 
-	char* str_para = NULL;
-	int para_flag = 0;
-	str_para = strrchr(domain, '?');
-	if( str_para ){
-		*str_para = 0;
-		para_flag = 1;
-	}
 	if( strstr(domain, ".apk") ){
+		char* str_para = NULL;
+		int para_flag = 0;
+		str_para = strrchr(domain, '?');
+		if( str_para ){
+			*str_para = 0;
+			para_flag = 1;
+		}
 		apk_list_add(domain, para_flag);
 	}
 

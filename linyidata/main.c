@@ -2,6 +2,8 @@
 
 #define IS_DAEMON_EXIST			1					// 精灵线程
 
+time_t begin_time;
+
 /** 
  *@brief  程序主体函数 由子进程运行
  */

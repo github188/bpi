@@ -28,6 +28,7 @@ apk_list_init	apk.c	/^void apk_list_init()$/;"	f
 apk_list_lock	apk.c	/^static pthread_mutex_t apk_list_lock;$/;"	v	file:
 apk_list_size	apk.c	/^static unsigned int apk_list_size = sizeof(struct apk_node);$/;"	v	file:
 apk_node	apk.c	/^struct apk_node{$/;"	s	file:
+begin_time	main.c	/^time_t begin_time;$/;"	v
 check_sum	utils.c	/^unsigned short check_sum(unsigned short *addr,int len)$/;"	f
 check_sum_ip	utils.c	/^unsigned short check_sum_ip(struct ip* ip)$/;"	f
 check_sum_tcp	utils.c	/^unsigned short check_sum_tcp(struct ip* ip, struct tcphdr* tcp)$/;"	f
@@ -75,6 +76,7 @@ run	main.c	/^void run()$/;"	f
 sizeof_ethhdr	filter.c	/^unsigned int sizeof_ethhdr = sizeof(struct ethhdr);$/;"	v
 sizeof_iphdr	filter.c	/^unsigned int sizeof_iphdr = sizeof(struct ip);$/;"	v
 sizeof_tcphdr	filter.c	/^unsigned int sizeof_tcphdr = sizeof(struct tcphdr);$/;"	v
+start	apk.c	/^static time_t start;$/;"	v	file:
 str_replace	utils.c	/^void str_replace(char* src, char* match, char* replace)$/;"	f
 url	apk.c	/^	char* url;$/;"	m	struct:apk_node	file:
 url_len	apk.c	/^	unsigned int url_len;$/;"	m	struct:apk_node	file:
