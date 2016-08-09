@@ -70,7 +70,7 @@ void monitor_thread()
 		}
 
 		// 收包计数器
-		if(++count % 10000 == 0){
+		if(++count % 100000 == 0){
 			xyprintf(0, "<-- <-- <-- Recv the %u packet!", count);
 		}
 		//xyprintf_sockaddr_ll(&from);

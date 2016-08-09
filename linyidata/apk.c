@@ -62,8 +62,13 @@ void apk_list_add(char* url, int para_falg)
 	node->url_len = strlen(url);
 	
 	// 其他初始
-	node->count = 0;
-	node->para_count = 0;
+	node->count = 1;
+	if( para_falg ){
+		node->para_count = 1;
+	}
+	else {
+		node->para_count = 0;
+	}
 
 
 	// 添加到链表中
