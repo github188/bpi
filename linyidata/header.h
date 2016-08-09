@@ -34,7 +34,7 @@
 
 #include "list.h"
 
-#include <postgresql/libpq-fe.h>
+#include <libpq-fe.h>
 
 #define WRITE_LOG	1
 

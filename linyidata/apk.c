@@ -90,17 +90,24 @@ void printf_apk_list()
 {
 	struct list_head* pos;
 	struct apk_node* node;
+//	PGconn conn* = sql_init();
+//int sql_destory(PGconn *conn);
 
 	// 头部信息
 	time_t now = time(0);
 	xyprintf(0, "now - start = %d", now - start);
 	xyprintf(0, "url\tcount\tpara_count\n\t\tapk_list_count = %u", apk_list_count);
-	
+	char sql_str[8192];
+
 	// 开始遍历
 	pthread_mutex_lock(&apk_list_lock);
 	for( pos = apk_list_head.next; pos != &apk_list_head; pos = pos->next ){
 		node = (struct apk_node*)pos;
 		xyprintf(0, "%s\t%u\t%u", node->url, node->count, node->para_count);
+//		if(conn){
+//			snprintf(sql_str, 8191, "INSERT INTO ");
+//			sql_exec(conn, sql_str);
+//		}
 	}
 	pthread_mutex_unlock(&apk_list_lock);
 }

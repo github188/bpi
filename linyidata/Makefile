@@ -2,7 +2,8 @@ CC=gcc
 MAKE=make
 
 #编译选项
-LIB=-lpthread -lm -lpq
+INCLUDE=-I/usr/include/postgresql
+LIB= -lpthread -lm -lpq
 
 SOURCE=sql.c apk.c filter.c logs.c main.c monitor.c utils.c
 DEPEND=sql.o apk.o filter.o logs.o main.o monitor.o utils.o
@@ -17,11 +18,11 @@ gdb:clean gdb_out mv
 	@echo "-- ok!-- "
 
 out:
-	@$(CC) -c $(SOURCE)
+	@$(CC) -c $(SOURCE) $(INCLUDE)
 	@$(CC) $(DEPEND) -o $(TARGET) $(LIB)
 
 gdb_out:
-	@$(CC) -g -O0 -c $(SOURCE)
+	@$(CC) -g -O0 -c $(SOURCE) $(INCLUDE)
 	@$(CC) -g -O0 $(DEPEND) -o $(TARGET) $(LIB)
 
 mv:

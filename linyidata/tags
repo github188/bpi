@@ -7,9 +7,10 @@
 CC	Makefile	/^CC=gcc$/;"	m
 DEPEND	Makefile	/^DEPEND=sql.o apk.o filter.o logs.o main.o monitor.o utils.o$/;"	m
 HEADER_H	header.h	7;"	d
+INCLUDE	Makefile	/^INCLUDE=-I\/usr\/include\/postgresql$/;"	m
 INIT_LIST_HEAD	list.h	/^static inline void INIT_LIST_HEAD(struct list_head *list)$/;"	f
 IS_DAEMON_EXIST	main.c	3;"	d	file:
-LIB	Makefile	/^LIB=-lpthread -lm -lpq$/;"	m
+LIB	Makefile	/^LIB= -lpthread -lm -lpq$/;"	m
 LIST_HEAD	list.h	22;"	d
 LIST_HEAD_INIT	list.h	20;"	d
 MAKE	Makefile	/^MAKE=make$/;"	m
