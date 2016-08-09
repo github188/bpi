@@ -34,6 +34,8 @@
 
 #include "list.h"
 
+#include <postgresql/libpq-fe.h>
+
 #define WRITE_LOG	1
 
 // TODO 网卡需要在配置文件中读取
@@ -78,6 +80,11 @@ void* filter_thread(void* lp);
 
 // monitor.c
 void monitor_thread();
+
+// sql
+PGconn* sql_init();
+int sql_exec(PGconn *conn,char *sql_str);
+int sql_destory(PGconn *conn);
 
 #endif
 

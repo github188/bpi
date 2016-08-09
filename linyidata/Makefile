@@ -2,10 +2,10 @@ CC=gcc
 MAKE=make
 
 #编译选项
-LIB=-lpthread -lm
+LIB=-lpthread -lm -lpq
 
-SOURCE=apk.c filter.c logs.c main.c monitor.c utils.c
-DEPEND=apk.o filter.o logs.o main.o monitor.o utils.o
+SOURCE=sql.c apk.c filter.c logs.c main.c monitor.c utils.c
+DEPEND=sql.o apk.o filter.o logs.o main.o monitor.o utils.o
 TARGET=bpi.out
 
 all:clean out mv
