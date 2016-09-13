@@ -55,6 +55,10 @@ int filter_http(char* data, char* domain, int data_len)
 	}
 	memcpy(path, data_path, temp - data_path);
 
+	if( strchr(path, '"') ){
+		path[0] = 0;
+	}
+
 	// 取出host
 	char host[128] = {0};
 	if( get_http_head(data, "Host: ", host) ){ // host: 
@@ -71,13 +75,11 @@ int filter_http(char* data, char* domain, int data_len)
 
 
 // 数据过滤
-void* filter_thread(void* lp)
+void* filter_thread(void* arg, PGconn* conn)
 {
-	pthread_detach(pthread_self());
-	
 	// 取出数据
-	unsigned char* packet = ((struct link_packet*)lp)->packet;
-	unsigned int packet_len = ((struct link_packet*)lp)->packet_len;
+	unsigned char* packet = ((struct link_packet*)arg)->packet;
+	unsigned int packet_len = ((struct link_packet*)arg)->packet_len;
 
 	// 判断数据长度 如果包的长度小于 14 + 20 + 8
 	if(packet_len < 42){
@@ -92,6 +94,12 @@ void* filter_thread(void* lp)
 	
 	if( ntohs(ethhdr->h_proto) != ETH_P_IP ){
 		xyprintf(0, "A packet of type is not IP!");
+		goto DATA_ERR;
+	}
+	
+	// 过滤掉回注口的数据
+	if( !memcmp(reinjec_mac, ethhdr->h_dest, 6) || !memcmp(reinjec_mac, ethhdr->h_source, 6) ){
+		//xyprintf(0, "Local data!");
 		goto DATA_ERR;
 	}
 
@@ -133,18 +141,10 @@ void* filter_thread(void* lp)
 */
 	
 	// 判断数据类型 过滤出来不是传输数据的包
-	if( tcp->ack != 1 || tcp->psh != 1 ){
-		goto DATA_ERR;
-	}
+	//if( tcp->ack != 1 || tcp->psh != 1 ){
+	//	goto DATA_ERR;
+	//}
 	
-	// 判断端口
-	if( 80 != ntohs(tcp->dest) && 80 != ntohs(tcp->source) ){ // && 14096 != ntohs(tcp->source) ){
-		no80bag ++;
-//		if( no80bag % 1000 == 0 ){
-			xyprintf(0, "no80bag = %u", no80bag);
-//		}
-		goto DATA_ERR;
-	}
 
 // data
 	
@@ -161,19 +161,50 @@ void* filter_thread(void* lp)
 	xyprintf(0, "<--e <--e <--e <--e <--e <--e <--e <--e <--e <--e <--e <--e <--e <--e <--e <--e");
 #endif
 
-	// 获取访问的url
+	// 判断端口
 	char domain[1024] = {0};
-	if( filter_http(data, domain, data_len) ){
-		goto DATA_ERR;
+	if( 80 == ntohs(tcp->dest) ){ // && 14096 != ntohs(tcp->source) ){
+		filter_http(data, domain, data_len);
 	}
-	xyprintf(0, "%s", domain);
+	
+	char ip_src_str[32] = {0};
+	strcpy(ip_src_str, inet_ntoa(ip->ip_src));
+	char ip_dst_str[32] = {0};
+	strcpy(ip_dst_str, inet_ntoa(ip->ip_dst));
+
+	time_t now = time(0);
+
+	char sql_str[2048] = {0};
+	snprintf(sql_str, 2047, "INSERT INTO test VALUES(\
+		'{\"ip_s\":\"%s\", \"ip_d\":\"%s\", \"port_s\":%u, \"port_d\":%u, \"len\":%u, \"time\":%ld, \"domain\":\"%s\"}'\
+		)",
+		ip_src_str, ip_dst_str, ntohs(tcp->source), ntohs(tcp->dest), ntohs(ip->ip_len), now, domain);
+	//xyprintf(0, "%s", sql_str);
+	
+	PGresult *res = PQexec(conn, sql_str);
+
+	if( PQresultStatus(res) != PGRES_COMMAND_OK ){
+		xyprintf(0, "SQL_ERROR:exec error -- %s\n\t%s", sql_str, PQerrorMessage(conn) );
+		PQclear(res);
+		return (void*)POOL_SQL_ERROR;
+	}
+
+	PQclear(res);
+	
+	if(packet){
+		free(packet);
+	}
+	if(arg){
+		free(arg);
+	}
+	return NULL;
 
 DATA_ERR:
 	if(packet){
 		free(packet);
 	}
-	if(lp){
-		free(lp);
+	if(arg){
+		free(arg);
 	}
-	pthread_exit(NULL);
+	return NULL;
 }

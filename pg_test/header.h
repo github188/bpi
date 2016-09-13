@@ -38,8 +38,12 @@
 
 #define WRITE_LOG	0
 
+#define POOL_SQL_ERROR		123456L
+
 // TODO 网卡需要在配置文件中读取
 #define REINJEC_NIC		"p32p1" 
+
+
 
 // 全局变量
 extern unsigned int sizeof_iphdr;
@@ -64,22 +68,18 @@ void xyprintf_ethhdr(struct ethhdr* ethhdr);
 void xyprintf_data(unsigned char* data, int len);
 void str_replace(char* src, char* match, char* replace);
 
-void* print_thread(void *fd);
-
 // filter.c
 struct link_packet{
 	unsigned char* packet;
 	unsigned int packet_len;
 };
-void* filter_thread(void* lp);
+void* filter_thread(void* arg, PGconn* conn);
 
 // monitor.c
 void monitor_thread();
 
 // sql
-PGconn* sql_init();
-int sql_exec(PGconn *conn,char *sql_str);
-int sql_destory(PGconn *conn);
+int sql_exec(char* sql_str);
 
 #endif
 

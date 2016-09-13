@@ -30,6 +30,16 @@ void run()
 			*************************************************************************\n",
 			getpid() );
 	
+	// 初始化网卡
+	if( init_nic(REINJEC_NIC) ){
+		xyprintf(0, "Init Nic failed, 10s exit!");
+		sleep(10);
+		exit(0);
+	}
+
+	// 初始化进程池
+	pool_init(32);
+
 	while(1){
 		monitor_thread();
 		sleep(3);

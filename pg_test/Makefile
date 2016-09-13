@@ -5,8 +5,8 @@ MAKE=make
 INCLUDE=-I/usr/include/postgresql
 LIB= -lpthread -lm -lpq
 
-SOURCE=sql.c filter.c logs.c main.c monitor.c utils.c
-DEPEND=sql.o filter.o logs.o main.o monitor.o utils.o
+SOURCE=pool.c filter.c logs.c main.c monitor.c utils.c
+DEPEND=pool.o filter.o logs.o main.o monitor.o utils.o
 TARGET=bpi.out
 
 all:clean out mv

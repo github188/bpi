@@ -74,19 +74,9 @@ void monitor_thread()
 			xyprintf(0, "<-- <-- <-- Recv the %u packet!", count);
 		}
 		//xyprintf_sockaddr_ll(&from);
-
-		// 新线程处理数据包
-		if( pthread_create(&pt, NULL, filter_thread, (void*)lp) != 0 ){
-			xyprintf(errno, "PTHREAD_ERROR: %s %d -- pthread_create()", __FILE__, __LINE__);
-			
-			// 释放申请的空间
-			if(lp->packet){
-				free(lp->packet);
-			}
-			if(lp){
-				free(lp);
-			}
-		}
+		
+		// 添加到线程池任务队列
+		pool_add_worker( filter_thread, lp);
 	} //end for
 ERR:
 	close(sockfd);
